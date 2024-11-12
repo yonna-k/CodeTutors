@@ -2,7 +2,7 @@
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
-from tutorials.forms import LogInForm
+from tutorials.forms.login_forms import LogInForm
 from tutorials.models.user_models import User
 from tutorials.tests.helpers import LogInTester, MenuTesterMixin, reverse_with_next
 
