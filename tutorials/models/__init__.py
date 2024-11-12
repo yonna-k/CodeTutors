@@ -1,1 +1,1 @@
-from tutorials.models.user_models import *
+from tutorials.models.user_models import User
