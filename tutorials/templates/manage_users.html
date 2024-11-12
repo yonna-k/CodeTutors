@@ -1,0 +1,27 @@
+{% extends 'manage_entities.html' %}
+
+{% block entity_type %}[model name]{% endblock %} 
+<!-- TODO: some method to get the model name-->
+
+{% block table_headers %}
+    <th scope="col">Username</th>
+    <th scope="col">Full Name</th>
+    <th scope="col">Email</th>
+    <th scope="col" class="text-end">Actions</th>
+{% endblock %}
+
+{% block table_rows %}
+    {% for user in users %}
+    <tr>
+        <th scope="col">{{user.username}}</th>
+        <td>{{user.first_name}} {{user.last_name}}</td>
+        <td>{{user.email}}</td>
+        <!--TODO: add urls with a-href for buttons to function later-->
+        <td class="text-end">
+            <a href="#" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye-fill"></i></a>
+            <a href="#" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil-fill"></i></a>
+            <a href="#" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
+        </td>            
+    </tr>
+    {% endfor %}
+{% endblock %}
