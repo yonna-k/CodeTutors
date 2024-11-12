@@ -18,7 +18,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from tutorials.views import *
+from tutorials.views import login_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
