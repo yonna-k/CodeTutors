@@ -136,7 +136,7 @@ class BookingModelTestCase(TestCase):
         self.booking.duration = "long"
         self.assertEqual(self.booking.get_duration_display(), "long (2hrs)")
 
-    
+    #tests for student (foreign key)
     def test_booking_deleted_when_student_deleted(self):
         self.booking.student.delete()  # Delete the student
         with self.assertRaises(Booking.DoesNotExist):  # Booking should be deleted
@@ -150,6 +150,16 @@ class BookingModelTestCase(TestCase):
         invalid_student = Student.objects.filter(id=999).first()
         self.booking.student = invalid_student
         self._assert_booking_is_invalid()
+    
+    def test_default_foreign_key_value(self):
+        default_student = Student.objects.filter(id=1).first()
+        self.booking = Booking.objects.create(
+            date="2024-12-01",  #YYYY-MM-DD format
+            time="14:30:00",    #HH:MM:SS format
+            frequency="weekly",
+            duration="short"
+        )
+        self.assertEqual(self.booking.student, default_student)
         
 
     #helper methods
