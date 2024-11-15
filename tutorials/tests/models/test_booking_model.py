@@ -1,12 +1,25 @@
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.test import TestCase
 from tutorials.models.booking_models import Booking
+from tutorials.models.student_models import Student
+from django.contrib.auth.hashers import make_password
 
 class BookingModelTestCase(TestCase):
     """Unit tests for the Booking model."""
 
     def setUp(self):
+        self.student = Student.objects.create(
+            username='@teststudent',
+            password=make_password('Password123'), 
+            first_name='Test',
+            last_name='Student',
+            email='teststudent@example.com',
+            level='BEGINNER'
+        )
+
         self.booking = Booking.objects.create(
+            student = self.student,
             date="2024-12-01",  #YYYY-MM-DD format
             time="14:30:00",    #HH:MM:SS format
             frequency="weekly",
@@ -16,8 +29,8 @@ class BookingModelTestCase(TestCase):
     def test_valid_booking(self):
         self._assert_booking_is_valid()
         
-    def test_booking_str_method(self):
-        expected_str = f"Requested: Booking on {self.booking.date} at {self.booking.time}"
+    def test_booking_str(self):
+        expected_str = f"Requested: Booking for {self.student} on 2024-12-01 at 14:30:00"
         self.assertEqual(str(self.booking), expected_str)
     
     #tests for date
@@ -124,8 +137,20 @@ class BookingModelTestCase(TestCase):
         self.assertEqual(self.booking.get_duration_display(), "long (2hrs)")
 
     
-    #add tests for student foreign key
+    def test_booking_deleted_when_student_deleted(self):
+        self.booking.student.delete()  # Delete the student
+        with self.assertRaises(Booking.DoesNotExist):  # Booking should be deleted
+            Booking.objects.get(id=self.booking.id)
 
+    def test_student_related_name_for_bookings(self):
+        bookings = self.student.bookings.all()
+        self.assertEqual(bookings.count(), 1)
+    
+    def test_invalid_student_foreign_key(self):
+        invalid_student = Student.objects.filter(id=999).first()
+        self.booking.student = invalid_student
+        self._assert_booking_is_invalid()
+        
 
     #helper methods
     def _assert_booking_is_valid(self):
