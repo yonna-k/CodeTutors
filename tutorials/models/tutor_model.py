@@ -20,7 +20,7 @@ class Tutor(User):
     available_saturday = models.BooleanField(default=False)
     available_sunday = models.BooleanField(default=False)
 
-    # Hourly rate in the local currency
+    # Hourly rate 
     rate = models.DecimalField(
         max_digits=3,  # Maximum digits including decimal places
         decimal_places=2,  # Decimal places for currency
@@ -30,16 +30,16 @@ class Tutor(User):
 
     class Meta:
        
-        ordering = ['rate', 'last_name']
+        ordering = ['specialty', '-availability']
 
     def get_specialties(self):
         
         specialties = [
-            "Math" if self.specializes_in_math else None,
-            "Science" if self.specializes_in_science else None,
-            "English" if self.specializes_in_english else None,
-            "Programming" if self.specializes_in_programming else None,
-            "History" if self.specializes_in_history else None,
+            "Python" if self.specializes_in_python else None,
+            "Java" if self.specializes_in_java else None,
+            "C" if self.specializes_in_C else None,
+            "Ruby" if self.specializes_in_ruby else None,
+            "SQL" if self.specializes_in_SQL else None,
         ]
         return [specialty for specialty in specialties if specialty]
 
@@ -58,4 +58,4 @@ class Tutor(User):
 
     def __str__(self):
         
-        return f"{self.full_name()} - Rate: {self.rate}/hour"
+        return f"{self.name} - {self.specialty} ({'Available' if self.availability else 'Not Available'})"
