@@ -58,4 +58,4 @@ class Tutor(User):
 
     def __str__(self):
         
-        return f"{self.name} - {self.specialty} ({'Available' if self.availability else 'Not Available'})"
+        return f"{self.first_name} - {self.specialty} ({'Available' if self.availability else 'Not Available'})"
