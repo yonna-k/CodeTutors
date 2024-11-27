@@ -1,0 +1,90 @@
+{% extends 'dashboard.html' %}
+
+{% block student_dashboard %}
+<div>
+    <!-- Upcoming Lessons -->
+    <div class="mb-5">
+        <h3 class="mb-3">Your upcoming lessons</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Duration</th>
+                    <th scope="col">Tutor</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Venue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- TODO -->
+                {% for lesson in upcoming_lessons %}
+                <tr>
+                    <td>{{ lesson.date }}</td>
+                    <td>{{ lesson.time }}</td>
+                    <td>{{ lesson.duration }}</td>
+                    <td>{{ lesson.tutor }}</td>
+                    <td>{{ lesson.subject }}</td>
+                    <td>{{ lesson.venue }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="btn btn-primary">New booking...</button>
+    </div>
+
+    <!-- Previous Lessons -->
+    <div class="mb-5">
+        <h3 class="mb-3">Your previous lessons</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Duration</th>
+                    <th scope="col">Tutor</th>
+                    <th scope="col">Subject</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- TODO -->
+                {% for lesson in previous_lessons %}
+                <tr>
+                    <td>{{ lesson.date }}</td>
+                    <td>{{ lesson.time }}</td>
+                    <td>{{ lesson.duration }}</td>
+                    <td>{{ lesson.tutor }}</td>
+                    <td>{{ lesson.subject }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Invoices -->
+    <div>
+        <h3 class="mb-3">Your invoices</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Invoice Number</th>
+                    <th scope="col">Term</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- TODO -->
+                {% for invoice in invoices %}
+                <tr>
+                    <td>{{ invoice.number }}</td>
+                    <td>{{ invoice.term }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>{{ invoice.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

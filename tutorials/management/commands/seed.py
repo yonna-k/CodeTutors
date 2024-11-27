@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from tutorials.models import User
+from tutorials.models import User, Student, Booking
 
 import pytz
 from faker import Faker
 from random import randint, random
+from datetime import timedelta, datetime
 
 user_fixtures = [
     {'username': '@johndoe', 'email': 'john.doe@example.org', 'first_name': 'John', 'last_name': 'Doe'},
@@ -21,10 +22,12 @@ class Command(BaseCommand):
     help = 'Seeds the database with sample data'
 
     def __init__(self):
+        super().__init__()
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
         self.create_users()
+        self.create_bookings()
         self.users = User.objects.all()
 
     def create_users(self):
