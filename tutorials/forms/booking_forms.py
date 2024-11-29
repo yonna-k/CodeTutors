@@ -8,10 +8,24 @@ class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
         #student field added after
-        fields = ['date', 'time', 'frequency', 'duration']
+        fields = ['day', 'time', 'frequency', 'duration', 'lang']
 
-        date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
         time = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
+
+    def clean_time(self):
+        booking_time = self.cleaned_data.get('time')
+
+        if not booking_time:
+            raise forms.ValidationError("Time is required.")
+        
+        start_time = time(9, 0)  # 9:00 AM
+        end_time = time(17, 0)  # 5:00 PM
+
+        # Check if the time is outside the valid range
+        if not (start_time <= booking_time <= end_time):
+            raise forms.ValidationError("Bookings can only be made between 9:00 AM and 5:00 PM.")
+
+        return booking_time
 
     def get_term_dates(self, year):
         #calculate Easter Sunday
@@ -38,58 +52,59 @@ class BookingForm(forms.ModelForm):
             "Term 2": (term_2_start, term_2_end),
             "Term 3": (first_monday_sep, term_3_end),
         }
+    
+    def find_first_matching_date(self, term_dates, selected_day_number):
+        # finds the first occurrence of the selected day in the given terms
+        for term_name, (start_date, end_date) in term_dates.items():
+            if start_date > date.today():
+                #finds the first occurrence of the selected day in the term
+                days_ahead = (selected_day_number - start_date.weekday() + 7) % 7
+                first_matching_date = start_date + timedelta(days=days_ahead)
 
-    def clean_date(self):
-        booking_date = self.cleaned_data.get('date')
+                #check if the matching date falls within the term
+                if start_date <= first_matching_date <= end_date:
+                    return first_matching_date
 
-        if not booking_date:
-            raise forms.ValidationError("Date is required.")
+        #return None if no match is found
+        return None
+    
+    def clean_day(self):
+        selected_day = self.cleaned_data.get('day')
+        term_dates = self.get_term_dates(date.today().year)
+
+        if not selected_day:
+            raise forms.ValidationError("Day is Required.")
         
-        #check if date is not in the past/current date
-        current_date = date.today()
-        if booking_date <= current_date:
-            raise forms.ValidationError("Bookings must be made in advance.")
-
-        #check if the date is in the current/next year
-        current_year = date.today().year
-        if not (current_year <= booking_date.year <= current_year + 1):
-            raise forms.ValidationError(f"Bookings must be within the current or next year.")
+        #maps each day to a value
+        day_map = {
+                'Monday': 0,
+                'Tuesday': 1,
+                'Wednesday': 2,
+                'Thursday': 3,
+                'Friday': 4,
+                'Saturday': 5,
+                'Sunday': 6,
+            }
         
-        #check if booking is not in current term (must be made before a term starts)
-        term_dates = self.get_term_dates(booking_date.year)
-
-        term_time = False
-        for term, (start, end) in term_dates.items():
-            if start <= booking_date <= end:
-                term_time = True
-                if start <= current_date <= end:
-                    raise forms.ValidationError(f"Bookings should be made a term in advance. Current term: ({start} to {end}).")
+        if selected_day not in day_map:
+            raise forms.ValidationError("Invalid day selected.")
         
-        #check if booking is not in holiday period
-        if not term_time:
-            raise forms.ValidationError("Bookings should be made during term time, not holidays.")
+        selected_day_number = day_map[selected_day]
 
-        #check if the date is a Saturday or Sunday
-        if booking_date.weekday() >= 5:  #5 = Saturday, 6 = Sunday
-            raise forms.ValidationError("Bookings cannot be made on Saturdays or Sundays.")
-        
+        term_dates = self.get_term_dates(date.today().year)
+        first_matching_date = self.find_first_matching_date(term_dates, selected_day_number)
+        #if no match is found, calculate next year's terms and try again
+        if not first_matching_date:
+            next_year_term_dates = self.get_term_dates(date.today().year + 1)
+            first_matching_date = self.find_first_matching_date(next_year_term_dates, selected_day_number)
 
-        return booking_date
+        #if still no match, raise an error
+        if not first_matching_date:
+            raise forms.ValidationError("No matching day found in the upcoming terms.")
 
-
-    def clean_time(self):
-        booking_time = self.cleaned_data.get('time')
-
-        if not booking_time:
-            raise forms.ValidationError("Time is required.")
-        
-        start_time = time(9, 0)  # 9:00 AM
-        end_time = time(17, 0)  # 5:00 PM
-
-        # Check if the time is outside the valid range
-        if not (start_time <= booking_time <= end_time):
-            raise forms.ValidationError("Bookings can only be made between 9:00 AM and 5:00 PM.")
-
-        return booking_time
+        #set the calculated date in the cleaned data
+        self.cleaned_data['date'] = first_matching_date
+        return selected_day  #return the validated day
+                    
 
     

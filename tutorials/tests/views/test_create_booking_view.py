@@ -29,14 +29,15 @@ class CreateBookingViewTestCase(TestCase):
         
 
         # URL for booking form
-        self.url = reverse('create_booking')  # Make sure the URL name is correct
+        self.url = reverse('create_booking')
 
         # Sample valid booking data
         self.valid_data = {
-            'date': '2025-02-12', 
+            'day' : 'Monday', 
             'time': '14:30:00',
             'frequency': 'weekly',
-            'duration': 'short'
+            'duration': 'short',
+            'lang' : 'Ruby'
         }
 
     def test_get_create_booking(self):
