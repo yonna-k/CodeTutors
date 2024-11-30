@@ -16,13 +16,33 @@ class Booking(models.Model):
         ("weekly", "weekly"),
         ("fortnightly", "fortnightly"),
     ]
-    frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES) 
+    frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, default="weekly") 
 
     DURATION_CHOICES = [
         ("short", "short (1hr)"), # (database sees, user sees)
         ("long", "long (2hrs)"),
     ]
-    duration = models.CharField(max_length=10, choices=DURATION_CHOICES)
+    duration = models.CharField(max_length=10, choices=DURATION_CHOICES, default="short")
+
+    # what day the student would like their lessons
+    DAY_CHOICES = [
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday")
+    ]
+    day = models.CharField(max_length=20, choices=DAY_CHOICES, default="Monday")
+
+    # what programming language the student would like their lessons in
+    PLANG_CHOICES = [
+        ("Python", "Python"),
+        ("Java", "Java"),
+        ("Ruby", "Ruby"),
+        ("C", "C"),
+        ("SQL", "SQL")
+    ]
+    lang = models.CharField(max_length=20, choices=PLANG_CHOICES, default="Python")
     
 
     def __str__(self):

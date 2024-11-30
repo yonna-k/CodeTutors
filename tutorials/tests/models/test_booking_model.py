@@ -20,17 +20,19 @@ class BookingModelTestCase(TestCase):
 
         self.booking = Booking.objects.create(
             student = self.student,
-            date="2024-12-01",  #YYYY-MM-DD format
+            date="2024-12-02",  #YYYY-MM-DD format
             time="14:30:00",    #HH:MM:SS format
             frequency="weekly",
-            duration="short"
+            duration="short",
+            day = "Tuesday",
+            lang = "C"
         )
     
     def test_valid_booking(self):
         self._assert_booking_is_valid()
         
     def test_booking_str(self):
-        expected_str = f"Requested: Booking for {self.student} on 2024-12-01 at 14:30:00"
+        expected_str = f"Requested: Booking for {self.student} on 2024-12-02 at 14:30:00"
         self.assertEqual(str(self.booking), expected_str)
     
     #tests for date
@@ -136,10 +138,11 @@ class BookingModelTestCase(TestCase):
         self.booking.duration = "long"
         self.assertEqual(self.booking.get_duration_display(), "long (2hrs)")
 
+
     #tests for student (foreign key)
     def test_booking_deleted_when_student_deleted(self):
-        self.booking.student.delete()  # Delete the student
-        with self.assertRaises(Booking.DoesNotExist):  # Booking should be deleted
+        self.booking.student.delete()
+        with self.assertRaises(Booking.DoesNotExist):
             Booking.objects.get(id=self.booking.id)
 
     def test_student_related_name_for_bookings(self):
@@ -160,6 +163,66 @@ class BookingModelTestCase(TestCase):
             duration="short"
         )
         self.assertEqual(self.booking.student, default_student)
+
+
+    #tests for day
+    def test_day_can_be_monday(self):
+        self.booking.day = "Monday"
+        self._assert_booking_is_valid()
+
+    def test_day_can_be_tuesday(self):
+        self.booking.day = "Tuesday"
+        self._assert_booking_is_valid()
+
+    def test_day_can_be_wednesday(self):
+        self.booking.day = "Wednesday"
+        self._assert_booking_is_valid()
+
+    def test_day_can_be_thursday(self):
+        self.booking.day = "Thursday"
+        self._assert_booking_is_valid()
+
+    def test_day_can_be_friday(self):
+        self.booking.day = "Friday"
+        self._assert_booking_is_valid()
+
+    def test_day_cannot_be_invalid(self):
+        self.booking.day = "Saturday"
+        self._assert_booking_is_invalid()
+
+    def test_day_cannot_be_blank(self):
+        self.booking.day = ""
+        self._assert_booking_is_invalid()
+
+    
+    #tests for language
+    def test_lang_can_be_java(self):
+        self.booking.lang = "Java"
+        self._assert_booking_is_valid()
+    
+    def test_lang_can_be_ruby(self):
+        self.booking.lang = "Ruby"
+        self._assert_booking_is_valid()
+    
+    def test_lang_can_be_C(self):
+        self.booking.lang = "C"
+        self._assert_booking_is_valid()
+
+    def test_lang_can_be_SQL(self):
+        self.booking.lang = "SQL"
+        self._assert_booking_is_valid()
+
+    def test_lang_can_be_python(self):
+        self.booking.lang = "Python"
+        self._assert_booking_is_valid()
+
+    def test_lang_cannot_be_invalid(self):
+        self.booking.lang = "Pascal"
+        self._assert_booking_is_invalid()
+
+    def test_lang_cannot_be_blank(self):
+        self.booking.lang = ""
+        self._assert_booking_is_invalid()
         
 
     #helper methods
@@ -167,7 +230,7 @@ class BookingModelTestCase(TestCase):
         try:
             self.booking.full_clean()
         except (ValidationError):
-            self.fail('Test user should be valid')
+            self.fail('Booking should be valid')
 
     def _assert_booking_is_invalid(self):
         with self.assertRaises(ValidationError):
