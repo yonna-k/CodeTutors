@@ -26,6 +26,12 @@ def student_dashboard(request):
     current_user = request.user
     return render(request, 'student_dashboard.html', {'user': current_user})
 
+@login_required
+def tutor_dashboard(request):
+    """Display the tutor's dashboard."""
+    current_user = request.user
+    return render(request, 'tutor_dashboard.html', {'user': current_user})
+
 
 @login_prohibited
 def home(request):
