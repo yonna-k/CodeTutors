@@ -36,7 +36,7 @@ class LessonModelTest(TestCase):
             available_friday=True,
             available_saturday=False,
             available_sunday=False,
-            rate=50.00,  # Hourly rate in the preferred currency
+            rate=9.00,  # Hourly rate in the preferred currency
         )
 
         self.booking = Booking.objects.create(
@@ -58,7 +58,7 @@ class LessonModelTest(TestCase):
         self._assert_lesson_is_valid()
 
     def test_lesson_str(self):
-        expected_str = f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor}"
+        expected_str = f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor.first_name}"
         self.assertEqual(str(self.lesson), expected_str)
 
     def test_lesson_deletes_when_booking_deletes(self):
@@ -82,7 +82,7 @@ class LessonModelTest(TestCase):
         self._assert_lesson_is_invalid()
     
     def test_booking_can_have_only_one_lesson(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(IntegrityError):
             Lesson.objects.create(
                 booking=self.booking,
                 tutor=self.tutor

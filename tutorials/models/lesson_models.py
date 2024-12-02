@@ -7,4 +7,4 @@ class Lesson(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE, related_name="lessons")
 
     def __str__(self):
-        return f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor}"
+        return f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor.first_name}"
