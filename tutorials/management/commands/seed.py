@@ -27,7 +27,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.create_users()
-        self.create_bookings()
         self.users = User.objects.all()
 
     def create_users(self):
