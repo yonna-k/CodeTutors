@@ -1,4 +1,5 @@
 from django.db import models
+from . import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Tutor(User):
@@ -22,15 +23,12 @@ class Tutor(User):
 
     # Hourly rate 
     rate = models.DecimalField(
-        max_digits=3,  # Maximum digits including decimal places
+        max_digits=5,  # Maximum digits including decimal places
         decimal_places=2,  # Decimal places for currency
         validators=[MinValueValidator(0)],
         help_text="Enter your preferred hourly rate: "
     )
 
-    class Meta:
-       
-        ordering = ['specialty', '-availability']
 
     def get_specialties(self):
         
@@ -57,5 +55,6 @@ class Tutor(User):
         return [day for day in availability if day]
 
     def __str__(self):
-        
-        return f"{self.first_name} - {self.specialty} ({'Available' if self.availability else 'Not Available'})"
+        specialties = ', '.join(self.get_specialties()) or 'None'
+        availability = 'Available' if any([self.available_monday, self.available_tuesday, self.available_wednesday, self.available_thursday, self.available_friday, self.available_saturday, self.available_sunday]) else 'Not Available'
+        return f"{self.first_name} - {specialties} ({availability})"
