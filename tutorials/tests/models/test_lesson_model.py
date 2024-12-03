@@ -58,7 +58,7 @@ class LessonModelTest(TestCase):
         self._assert_lesson_is_valid()
 
     def test_lesson_str(self):
-        expected_str = f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor.first_name}"
+        expected_str = f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor.first_name}, costing {self.lesson.invoice}"
         self.assertEqual(str(self.lesson), expected_str)
 
     def test_lesson_deletes_when_booking_deletes(self):
@@ -92,6 +92,22 @@ class LessonModelTest(TestCase):
         self.lesson.tutor = self.tutor
         self._assert_lesson_is_valid()
 
+    def test_invoice_calculated_correctly_short(self):
+        #map duration to integer value
+        DURATION_MULTIPLIER = {
+            "short": 1,
+            "long": 2,
+        }
+        self.assertEqual(DURATION_MULTIPLIER.get(self.lesson.booking.duration, 1) * self.lesson.tutor.rate, self.lesson.invoice)
+
+    def test_invoice_calculated_correctly_long(self):
+        #map duration to integer value
+        DURATION_MULTIPLIER = {
+            "short": 1,
+            "long": 2,
+        }
+        self.lesson.booking.duration = "long"
+        self.assertEqual(DURATION_MULTIPLIER.get(self.lesson.booking.duration, 1) * self.lesson.tutor.rate, self.lesson.invoice)
 
 
     #helper methods
