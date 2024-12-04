@@ -2,8 +2,8 @@
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
-from tutorials.forms import UserForm
-from tutorials.models import User
+from tutorials.forms.login_forms import UserForm
+from tutorials.models.user_models import User
 from tutorials.tests.helpers import reverse_with_next
 
 class ProfileViewTest(TestCase):

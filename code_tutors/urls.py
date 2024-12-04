@@ -18,19 +18,21 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from tutorials import views
+from tutorials.views import login_views
+from tutorials.views import booking_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('log_in/', views.LogInView.as_view(), name='log_in'),
-    path('log_out/', views.log_out, name='log_out'),
-    path('password/', views.PasswordView.as_view(), name='password'),
-    path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
-    path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
-    path('manage_students/', views.manage_students, name='manage_students'),
-    path('manage_tutors/', views.manage_tutors, name='manage_tutors'),
+    path('', login_views.home, name='home'),
+    path('dashboard/', login_views.dashboard, name='dashboard'),
+    path('log_in/', login_views.LogInView.as_view(), name='log_in'),
+    path('log_out/', login_views.log_out, name='log_out'),
+    path('password/', login_views.PasswordView.as_view(), name='password'),
+    path('profile/', login_views.ProfileUpdateView.as_view(), name='profile'),
+    path('sign_up/', login_views.SignUpView.as_view(), name='sign_up'),
+    path('manage/student/', login_views.manage_students, name='manage_students'),
+    path('manage/tutor/', login_views.manage_tutors, name='manage_tutors'),
+    path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
     #no implementation yet: path('manage_bookings/', views.manage_bookings, name='manage_bookings'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
