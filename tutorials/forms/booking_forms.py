@@ -2,7 +2,7 @@ from datetime import date, timedelta, time
 from dateutil import easter
 from dateutil.relativedelta import relativedelta, MO, SU
 from django import forms
-from tutorials.models.booking_models import Booking
+from tutorials.models import Booking
 
 class BookingForm(forms.ModelForm):
     class Meta:
@@ -17,7 +17,7 @@ class BookingForm(forms.ModelForm):
 
         if not booking_time:
             raise forms.ValidationError("Time is required.")
-        
+
         start_time = time(9, 0)  # 9:00 AM
         end_time = time(17, 0)  # 5:00 PM
 
@@ -52,7 +52,7 @@ class BookingForm(forms.ModelForm):
             "Term 2": (term_2_start, term_2_end),
             "Term 3": (first_monday_sep, term_3_end),
         }
-    
+
     def find_first_matching_date(self, term_dates, selected_day_number):
         # finds the first occurrence of the selected day in the given terms
         for term_name, (start_date, end_date) in term_dates.items():
@@ -67,14 +67,14 @@ class BookingForm(forms.ModelForm):
 
         #return None if no match is found
         return None
-    
+
     def clean_day(self):
         selected_day = self.cleaned_data.get('day')
         term_dates = self.get_term_dates(date.today().year)
 
         if not selected_day:
             raise forms.ValidationError("Day is Required.")
-        
+
         #maps each day to a value
         day_map = {
                 'Monday': 0,
@@ -85,10 +85,10 @@ class BookingForm(forms.ModelForm):
                 'Saturday': 5,
                 'Sunday': 6,
             }
-        
+
         if selected_day not in day_map:
             raise forms.ValidationError("Invalid day selected.")
-        
+
         selected_day_number = day_map[selected_day]
 
         term_dates = self.get_term_dates(date.today().year)
@@ -105,6 +105,3 @@ class BookingForm(forms.ModelForm):
         #set the calculated date in the cleaned data
         self.cleaned_data['date'] = first_matching_date
         return selected_day  #return the validated day
-                    
-
-    
