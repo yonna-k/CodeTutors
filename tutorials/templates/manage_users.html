@@ -1,7 +1,6 @@
 {% extends 'manage_entities.html' %}
 
-{% block entity_type %}[model name]{% endblock %} 
-<!-- TODO: some method to get the model name-->
+{% block entity_type %}{{entity_name}}{% endblock %} 
 
 {% block table_headers %}
     <th scope="col">Username</th>

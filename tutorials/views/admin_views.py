@@ -1,23 +1,23 @@
 from django.shortcuts import render
 
-from tutorials.models import User
+from tutorials.models import User, Tutor, Booking
 
-#TODO: use class like elsewhere in this file? e.g.: class AdminView():
+#TODO: use class based views?
+#TODO: use @login_required once Admin class made
 
-#TODO: replace User filter with Student.objects.all(), Tutor.objects.all()...
 def manage_students(request):
     "Renders the manage entities template with student data"
-    students = User.objects.filter(first_name__startswith='s')
-    return render(request, "manage_users.html", {'users': students})
+    students = User.objects.all()
+    return render(request, "manage_users.html", {'users': students, 'entity_name': "students"})
 
 def manage_tutors(request):
     "Renders the manage entities template with tutor data"
-    tutors = User.objects.filter(first_name__startswith='t')
-    return render(request, "manage_users.html", {'users': tutors})
+    tutors = Tutor.objects.all()
+    return render(request, "manage_users.html", {'users': tutors, 'entity_name': "tutors"})
 
 def manage_bookings(request):
     "Renders the manage entities template with booking data"
-    #TODO: fetch bookings from database and render 
-    return False
+    bookings = Booking.objects.all()
+    return render(request, "manage_bookings.html", {'bookings': bookings, 'entity_name': "bookings"})
 
 #TODO: implement CRUD functionalities

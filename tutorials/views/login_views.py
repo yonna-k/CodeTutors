@@ -11,12 +11,6 @@ from django.urls import reverse
 from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tutorials.helpers import login_prohibited
 
-from tutorials.models.booking_models import Booking
-from tutorials.models.lesson_models import Lesson
-from tutorials.models.student_models import Student
-from tutorials.models.tutor_model import Tutor
-from tutorials.models.user_models import User
-
 
 @login_required
 def dashboard(request):
@@ -31,25 +25,6 @@ def home(request):
     """Display the application's start/home screen."""
 
     return render(request, 'home.html')
-
-#TODO some way to distinguish admin
-@login_required
-def manage_students(request):
-    """Display a list of all students."""
-    students = Student.objects.all()
-    return render(request, 'manage_users.html', {'users': students})
-
-@login_required
-def manage_tutors(request):
-    """Display a list of all tutors."""
-    tutors = Tutor.objects.all()
-    return render(request, 'manage_users.html', {'users': tutors})
-
-@login_required
-def manage_bookings(request):
-    """Display a list of all bookings."""
-    bookings = Booking.objects.all()
-    return render(request, 'manage_bookings.html', {'bookings': bookings})
 
 
 class LoginProhibitedMixin:

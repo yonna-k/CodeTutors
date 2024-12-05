@@ -18,8 +18,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from tutorials.views import login_views
-from tutorials.views import booking_views
+from tutorials.views import login_views, booking_views, admin_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,9 +29,9 @@ urlpatterns = [
     path('password/', login_views.PasswordView.as_view(), name='password'),
     path('profile/', login_views.ProfileUpdateView.as_view(), name='profile'),
     path('sign_up/', login_views.SignUpView.as_view(), name='sign_up'),
-    path('manage/student/', login_views.manage_students, name='manage_students'),
-    path('manage/tutor/', login_views.manage_tutors, name='manage_tutors'),
+    path('manage/student/', admin_views.manage_students, name='manage_students'),
+    path('manage/tutor/', admin_views.manage_tutors, name='manage_tutors'),
+    path('manage/booking/', admin_views.manage_bookings, name='manage_bookings'),
     path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
-    #no implementation yet: path('manage_bookings/', views.manage_bookings, name='manage_bookings'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
