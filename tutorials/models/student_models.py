@@ -8,5 +8,7 @@ class Student(User):
         ('ADVANCED', 'Advanced'),
     ]
 
-    level = models.CharField(max_length=12, choices=LEVEL_CHOICES, default='BEGINNER'
-)
+    level = models.CharField(max_length=12, choices=LEVEL_CHOICES, default='BEGINNER')
+
+    def __str__(self):
+        return f"{self.first_name} ({self.level})"
