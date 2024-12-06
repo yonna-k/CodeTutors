@@ -223,6 +223,28 @@ class BookingModelTestCase(TestCase):
     def test_lang_cannot_be_blank(self):
         self.booking.lang = ""
         self._assert_booking_is_invalid()
+
+    
+    #tests for status
+    def test_status_cannot_be_empty(self):
+        self.booking.status = ""
+        self._assert_booking_is_invalid()
+
+    def test_status_can_be_open(self):
+        self.booking.status = "OPEN"
+        self._assert_booking_is_valid()
+    
+    def test_status_can_be_closed(self):
+        self.booking.status = "CLOSED"
+        self._assert_booking_is_valid()
+
+    def test_status_must_be_valid_choice(self):
+        self.booking.status = "IN REVIEW"
+        self._assert_booking_is_invalid()
+
+    def test_status_max_length_ten(self):
+        self.booking.status = "OPEN          "
+        self._assert_booking_is_invalid()
         
 
     #helper methods
