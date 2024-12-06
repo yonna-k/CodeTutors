@@ -11,11 +11,23 @@ from tutorials.forms.lesson_forms import AssignTutorForm
 def assign_tutor(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
 
+    #maps language to attribute
+    LANGUAGE_FIELD_MAPPING = {
+        "Python": "specializes_in_python",
+        "Java": "specializes_in_java",
+        "C": "specializes_in_C",
+        "SQL": "specializes_in_SQL",
+        "Ruby": "specializes_in_ruby",
+    }
+    field_name = LANGUAGE_FIELD_MAPPING.get(booking.lang)
+    if not field_name:
+        raise ValueError(f"Unsupported language: {booking.lang}")
+
     #filter tutors based on the current booking's language and availability
     tutors = Tutor.objects.filter(
         #match language specialty
-        **{f"specializes_in_{booking.lang.lower()}": True}, 
-        #match day availability 
+        **{field_name: True},
+        #match day availability
         **{f"available_{booking.day.lower()}": True}
     )
 
@@ -43,7 +55,8 @@ def assign_tutor(request, booking_id):
                 else:
                     #book lessons for the rest of the term
                     generate_recurring_lessons(booking, tutor)
-                    #booking.delete()
+                    #current booking is not connected to lesson, so can be deleted safely
+                    booking.delete()
                     messages.success(request, "Tutor assigned successfully and further lessons booked!")
                     return redirect("dashboard")
                 
@@ -134,10 +147,10 @@ def generate_recurring_lessons(booking, tutor):
                 frequency=booking.frequency,
                 duration=booking.duration,
                 day = booking.day,
-                lang = booking.lang
+                lang = booking.lang,
+                status = "CLOSED"
             )
             l = Lesson.objects.create(
                 booking=b,
                 tutor=tutor,
             )
-            #b.delete()
