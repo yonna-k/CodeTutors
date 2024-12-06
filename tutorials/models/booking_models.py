@@ -43,6 +43,12 @@ class Booking(models.Model):
         ("SQL", "SQL")
     ]
     lang = models.CharField(max_length=20, choices=PLANG_CHOICES, default="Python")
+
+    STATUS = [
+        ("OPEN", "OPEN"),
+        ("CLOSED", "CLOSED")
+    ]
+    status = models.CharField(max_length=10, choices=STATUS, default="OPEN")
     
 
     def __str__(self):
