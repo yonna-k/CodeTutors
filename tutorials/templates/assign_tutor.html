@@ -1,0 +1,118 @@
+{% extends "base_content.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 offset-md-3">
+            <h1>Assign Tutor or Update Booking</h1>
+            <p><strong>Student:</strong> {{ booking.student }} ({{ booking.student.first_name }} {{ booking.student.last_name }})</p>
+            <p>Instructions: Assign a Tutor to the Student's Booking Request. If there are no Tutors available, you will have to change the time and/or date. The system will check whether the tutor has an overlap in Lessons and inform you after assigning.</p>
+            {% if no_tutors %}
+                <div class="alert alert-warning">No tutors are available for this booking. Please update the booking details to match tutor availability.</div>
+            {% endif %}
+
+            <h3>Update Booking</h3>
+            <form method="post" action="{% url 'assign_tutor' booking.id %}">
+                {% csrf_token %}
+                
+                <!-- Render Day Field -->
+                <div class="mb-3">
+                    <label for="{{ booking_form.day.id_for_label }}">Day:</label>
+                    <select name="day" id="{{ booking_form.day.id_for_label }}" class="form-control">
+                        {% for value, label in booking_form.day.field.choices %}
+                            <option value="{{ value }}" {% if booking_form.day.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in booking_form.day.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            
+                <!-- Render Time Field -->
+                <div class="mb-3">
+                    <label for="{{ booking_form.time.id_for_label }}">Time:</label>
+                    <input type="time" name="time" id="{{ booking_form.time.id_for_label }}"
+                           value="{{ booking_form.initial.time|date:'H:i'|default:'' }}"
+                           class="form-control {% if booking_form.time.errors %}is-invalid{% endif %}">
+                    {% for error in booking_form.time.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            
+                <!-- Render Frequency Field -->
+                <div class="mb-3">
+                    <label for="{{ booking_form.frequency.id_for_label }}">Frequency:</label>
+                    <select name="frequency" id="{{ booking_form.frequency.id_for_label }}" class="form-control">
+                        {% for value, label in booking_form.frequency.field.choices %}
+                            <option value="{{ value }}" {% if booking_form.frequency.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in booking_form.frequency.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            
+                <!-- Render Duration Field -->
+                <div class="mb-3">
+                    <label for="{{ booking_form.duration.id_for_label }}">Duration:</label>
+                    <select name="duration" id="{{ booking_form.duration.id_for_label }}" class="form-control">
+                        {% for value, label in booking_form.duration.field.choices %}
+                            <option value="{{ value }}" {% if booking_form.duration.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in booking_form.duration.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            
+                <!-- Render Language Field -->
+                <div class="mb-3">
+                    <label for="{{ booking_form.lang.id_for_label }}">Language:</label>
+                    <select name="lang" id="{{ booking_form.lang.id_for_label }}" class="form-control">
+                        {% for value, label in booking_form.lang.field.choices %}
+                            <option value="{{ value }}" {% if booking_form.lang.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for error in booking_form.lang.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" name="save_changes" value="1" class="btn btn-secondary">Save Changes</button>
+                </div>
+            </form>
+
+            {% if not no_tutors %}
+                <h3>Assign Tutor</h3>
+                <form method="post" action="{% url 'assign_tutor' booking.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ assign_form.tutor.id_for_label }}">Select Tutor:</label>
+                        <select name="tutor" id="{{ assign_form.tutor.id_for_label }}" class="form-control">
+                            {% for tutor in assign_form.tutor.field.queryset %}
+                                <option value="{{ tutor.pk }}">{{ tutor.first_name }} {{ tutor.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                        {% for error in assign_form.tutor.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" name="assign_tutor" class="btn btn-primary">Assign Tutor</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

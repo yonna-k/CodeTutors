@@ -7,3 +7,4 @@ from tutorials.views.login_views import PasswordView
 from tutorials.views.login_views import ProfileUpdateView
 from tutorials.views.login_views import SignUpView
 from tutorials.views.booking_views import create_booking
+from tutorials.views.lesson_views import assign_tutor

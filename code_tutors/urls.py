@@ -20,6 +20,7 @@ from django.contrib import admin
 from django.urls import path
 from tutorials.views import login_views
 from tutorials.views import booking_views
+from tutorials.views import lesson_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('password/', login_views.PasswordView.as_view(), name='password'),
     path('profile/', login_views.ProfileUpdateView.as_view(), name='profile'),
     path('sign_up/', login_views.SignUpView.as_view(), name='sign_up'),
-    path('dashboard/student/book_session', booking_views.create_booking, name='create_booking')
+    path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
+    path('dashboard/admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor")
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
