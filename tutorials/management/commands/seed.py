@@ -15,8 +15,8 @@ user_fixtures = [
         'email': 'jane.doe@example.org',
         'first_name': 'Jane',
         'last_name': 'Doe',
-        'role': 'tutor',  # Specify the role
-        'rate': 50.00,  # Tutor-specific field
+        'role': 'tutor',
+        'rate': 50.00,
         'specializes_in_python': True,
         'specializes_in_java': False,
         'available_monday': True,
@@ -28,17 +28,17 @@ user_fixtures = [
         'email': 'charlie.johnson@example.org',
         'first_name': 'Charlie',
         'last_name': 'Johnson',
-        'role': 'student',  # Specify the role
-        'level': 'BEGINNER',  # Student-specific field
+        'role': 'student',
+        'level': 'BEGINNER',
     }
-]
+] # fixed bookings and lessons assigned below
 
 class Command(BaseCommand):
-    USER_COUNT = 100
-    TUTOR_COUNT = 30
-    STUDENT_COUNT = 30
-    BOOKING_COUNT = 30
-    LESSON_COUNT = 20
+    USER_COUNT = 200
+    TUTOR_COUNT = 20
+    STUDENT_COUNT = 100
+    BOOKING_COUNT = 50
+    LESSON_COUNT = 30
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
@@ -49,8 +49,8 @@ class Command(BaseCommand):
         self.create_users()
         self.create_tutors()
         self.create_students()
-        self.create_bookings()
         self.create_fixed_lesson()
+        self.create_bookings()
         self.create_lessons()
         print("Seeding complete.")
 
@@ -67,11 +67,32 @@ class Command(BaseCommand):
 
     def create_tutors(self):
         """Seed random Tutor objects."""
-        tutor_count = Tutor.objects.count()
-        while tutor_count < self.TUTOR_COUNT:
+        to_create = self.TUTOR_COUNT - Tutor.objects.count()
+        for _ in range(to_create):
             self.generate_random_tutor()
-            tutor_count = Tutor.objects.count()
+    
+    def create_students(self):
+        """Seed random Student objects."""
+        to_create = self.STUDENT_COUNT - Student.objects.count()
+        for _ in range(to_create):
+            self.generate_random_student()
 
+    def generate_random_student(self):
+        """Generate random students."""
+        first_name = self.faker.first_name()
+        last_name = self.faker.last_name()
+        email = create_email(first_name, last_name)
+        username = create_username(first_name, last_name)
+        level = choice(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'])
+
+        self.try_create_user(Student, {
+            'username': username,
+            'email': email,
+            'first_name': first_name,
+            'last_name': last_name,
+            'level': level
+        })
+    
     def generate_random_tutor(self):
         """Generate random tutors."""
         first_name = self.faker.first_name()
@@ -107,75 +128,21 @@ class Command(BaseCommand):
             **availability
         })
 
-    def create_students(self):
-        """Seed random Student objects."""
-        student_count = Student.objects.count()
-        while student_count < self.STUDENT_COUNT:
-            self.generate_random_student()
-            student_count = Student.objects.count()
-
-    def generate_random_student(self):
-        """Generate random students."""
-        first_name = self.faker.first_name()
-        last_name = self.faker.last_name()
-        email = create_email(first_name, last_name)
-        username = create_username(first_name, last_name)
-        level = choice(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'])
-
-        self.try_create_user(Student, {
-            'username': username,
-            'email': email,
-            'first_name': first_name,
-            'last_name': last_name,
-            'level': level
-        })
-
-    
-
-    def create_fixed_booking(self):
-        """Create a booking for a predefined Student."""
-        student = Student.objects.get(username='@charlie')
-        booking_date = datetime.strptime("2024-12-31", "%Y-%m-%d").date()
-        booking_time = datetime.strptime("12:00:00", "%H:%M:%S").time()
-        frequency = 'weekly'
-        duration = 'short'
-        day = 'Monday'
-        lang = 'Python'
-
+    def try_create_user(self, model, data):
+        """Try to create a user."""
         try:
-            booking, created = Booking.objects.get_or_create(
-                student=student,
-                date=booking_date,
-                time=booking_time,
-                frequency=frequency,
-                duration=duration,
-                day=day,
-                lang=lang,
+            user = model.objects.create_user(
+                username=data['username'],
+                email=data['email'],
+                password=self.DEFAULT_PASSWORD,
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                **{k: v for k, v in data.items() if k not in ['username', 'email', 'password', 'first_name', 'last_name']}
             )
-            if created:
-                print(f"Fixed booking created: {student} requests {day}, {booking_date} at {booking_time}, for {duration} lessons in {lang}.")
-            return booking
-
-        except (Student.DoesNotExist) as e:
-            print(f"Error creating fixed booking: {e}")
-    
-    def create_fixed_lesson(self):
-        """Create a fixed lesson for @charlie with @janedoe using the fixed booking."""
-        try:
-            booking = self.create_fixed_booking()  # Get the fixed booking for @charlie
-            tutor = Tutor.objects.get(username='@janedoe')
-
-            lesson, created = Lesson.objects.get_or_create(
-                booking=booking,
-                tutor=tutor,
-            )
-            if created:
-                print(f"Lesson created for [{booking}] with Tutor: {tutor}")
-            return lesson
-        
-        except (Student.DoesNotExist, Tutor.DoesNotExist) as e:
-            print(f"Error creating fixed lesson: {e}")
-        
+            print(f"Created {model.__name__} #{user.id} ({user.username})")
+        except IntegrityError as e:
+            print(f"Error creating user ({data.get('username')}): {e}")
+            
     
     def create_bookings(self):
         """Create a specified number of random bookings for students."""
@@ -197,7 +164,7 @@ class Command(BaseCommand):
             lang = choice(['Python', 'Java', 'Ruby', 'C', 'SQL'])
 
             # Create the booking
-            Booking.objects.create(
+            booking = Booking.objects.create(
                 student=student,
                 date=booking_date,
                 time=booking_time,
@@ -207,11 +174,11 @@ class Command(BaseCommand):
                 lang=lang,
             )
 
-            print(f"Booking created: {student} requests {day}, {booking_date} at {booking_time}, for {duration} lessons in {lang}.")
+            print(f"Booking #{booking.id} created: Student #{student.id} ({student.username}) requests {day}, {booking_date} at {booking_time}, for {duration} lessons in {lang}.")
 
     def create_lessons(self):
         """Assign tutors to bookings and create lessons."""
-        bookings = Booking.objects.filter(lesson__isnull=True)  # Bookings without lessons
+        bookings = Booking.objects.filter(status='OPEN')  # Bookings without lessons
         tutor_count = Tutor.objects.count()
 
         if bookings.count() == 0 or tutor_count == 0:
@@ -221,31 +188,74 @@ class Command(BaseCommand):
         for i, booking in enumerate(bookings):
             if i >= self.LESSON_COUNT:
                 break
+            
+            #TODO: Fix problem of "..._SQL" becoming "_sql"
+            matching_tutors = Tutor.objects.filter(
+                **{f"specializes_in_{booking.lang.lower()}": True},  # Match language specialty
+                **{f"available_{booking.day.lower()}": True}         # Match day availability
+            )
+            if not matching_tutors.exists():
+                print(f"No tutors available for Booking #{booking.id} ({booking.lang} on {booking.day}).")
+                continue
 
-            #TODO: Implement filtering for availability and specialties!
+            # Randomly select a tutor from the filtered queryset
+            tutor = matching_tutors.order_by('?').first()
 
-            tutor = Tutor.objects.all()[randint(0, tutor_count - 1)]
+            booking.status = "CLOSED"
+            booking.save()
+
+            #tutor = Tutor.objects.all()[randint(0, tutor_count - 1)]
             Lesson.objects.create(
                 booking=booking,
                 tutor=tutor,
             )
-            print(f"Lesson created for [{booking}] with Tutor: {tutor}")
+            print(f"Lesson created for Booking #{booking.id} with Tutor #{tutor.id} ({tutor.username})")
+    
+    def create_fixed_booking(self):
+        """Create a booking for a predefined Student."""
+        student = Student.objects.get(username='@charlie')
+        booking_date = datetime.strptime("2024-12-31", "%Y-%m-%d").date()
+        booking_time = datetime.strptime("12:00:00", "%H:%M:%S").time()
+        frequency = 'weekly'
+        duration = 'short'
+        day = 'Monday'
+        lang = 'Python'
 
-    def try_create_user(self, model, data):
-        """Try to create a user."""
         try:
-            model.objects.create_user(
-                username=data['username'],
-                email=data['email'],
-                password=self.DEFAULT_PASSWORD,
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                **{k: v for k, v in data.items() if k not in ['username', 'email', 'password', 'first_name', 'last_name']}
+            booking, created = Booking.objects.get_or_create(
+                student=student,
+                date=booking_date,
+                time=booking_time,
+                frequency=frequency,
+                duration=duration,
+                day=day,
+                lang=lang,
             )
-        except IntegrityError as e:
-            print(f"Error creating user: {e}")
+            if created:
+                print(f"Fixed Booking #{booking.id} created: Student #{student.id} ({student.username}) requests {day}, {booking_date} at {booking_time}, for {duration} lessons in {lang}.")
+            return booking
+
+        except (Student.DoesNotExist) as e:
+            print(f"Error creating fixed booking: {e}")
+    
+    def create_fixed_lesson(self):
+        """Create a fixed lesson for @charlie with @janedoe using the fixed booking."""
+        try:
+            booking = self.create_fixed_booking()  # Get the fixed booking for @charlie
+            booking.status = "CLOSED"
+            booking.save()
+            tutor = Tutor.objects.get(username='@janedoe')
+
+            lesson, created = Lesson.objects.get_or_create(
+                booking=booking,
+                tutor=tutor,
+            )
+            if created:
+                print(f"Fixed Lesson created for Booking #{booking.id} with Tutor #{tutor.id} ({tutor.username})")
+            return lesson
         
-        print(f"Creating {data['username']} as {model.__name__}") #TODO: Use a Booking ID?
+        except (Student.DoesNotExist, Tutor.DoesNotExist) as e:
+            print(f"Error creating fixed lesson: {e}")
 
 def create_username(first_name, last_name):
     return '@' + first_name.lower() + last_name.lower()
