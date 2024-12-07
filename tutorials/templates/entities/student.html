@@ -1,0 +1,9 @@
+{% extends 'entities/user.html' %}
+
+{% block extra_fields %}
+<div class="mb-3">
+    <p><strong>Level</strong>: {{ user.level }}</p>
+</div>
+<a href="{% url 'manage_students' %}" class="btn btn-primary">OK</a>
+
+{% endblock %}

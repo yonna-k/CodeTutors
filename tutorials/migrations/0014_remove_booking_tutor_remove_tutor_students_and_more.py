@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -21,6 +20,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='booking',
             name='status',
-            field=models.CharField(choices=[('OPEN', 'OPEN'), ('CLOSED', 'CLOSED')], default='OPEN', max_length=10),
+            field=models.CharField(
+                choices=[('OPEN', 'OPEN'), ('CLOSED', 'CLOSED')],
+                default='OPEN',
+                max_length=10,
+            ),
         ),
     ]

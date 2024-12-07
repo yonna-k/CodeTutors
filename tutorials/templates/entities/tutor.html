@@ -1,0 +1,27 @@
+{% extends 'entities/user.html' %}
+
+{% block extra_fields %}
+<div class="mb-3">
+    <p><strong>Specialty languages</strong>: 
+        <ul>
+            {% for specialty in user.get_specialties %}
+                <li>{{ specialty }}</li>
+            {% empty %}
+                <li>No specialties listed</li>
+            {% endfor %}
+        </ul>
+    </p>
+    <p><strong>Availabile on</strong>: 
+        <ul>
+            {% for day in user.get_availability %}
+                <li>{{ day }}</li>
+            {% empty %}
+                <li>Not available</li>
+            {% endfor %}
+        </ul>
+    </p>
+    <p><strong>Hourly Rate</strong>: {{user.rate}}</p>
+</div>
+
+<a href="{% url 'manage_tutors' %}" class="btn btn-primary">OK</a>
+{% endblock %}

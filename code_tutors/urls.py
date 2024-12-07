@@ -29,9 +29,23 @@ urlpatterns = [
     path('password/', login_views.PasswordView.as_view(), name='password'),
     path('profile/', login_views.ProfileUpdateView.as_view(), name='profile'),
     path('sign_up/', login_views.SignUpView.as_view(), name='sign_up'),
+
+    path('manage/user/', admin_views.manage_users, name='manage_users'),
     path('manage/student/', admin_views.manage_students, name='manage_students'),
     path('manage/tutor/', admin_views.manage_tutors, name='manage_tutors'),
     path('manage/booking/', admin_views.manage_bookings, name='manage_bookings'),
+    path('manage/lesson/', admin_views.manage_lessons, name='manage_lessons'),
+
+    path('user/<int:id>/', admin_views.get_user, name='get_user'),
+    path('student/<int:id>/', admin_views.get_student, name='get_student'),
+    path('tutor/<int:id>/', admin_views.get_tutor, name='get_tutor'),
+    path('booking/<int:id>/', admin_views.get_booking, name='get_booking'),
+    path('lesson/<int:id>/', admin_views.get_lesson, name='get_lesson'),
+
+    path('delete_user/<int:id>/', admin_views.delete_user, name='delete_user'),
+    path('delete_booking/<int:id>/', admin_views.delete_booking, name='delete_booking'),
+    path('delete_lesson/<int:id>/', admin_views.delete_lesson, name='delete_lesson'),
+
     path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

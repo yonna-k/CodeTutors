@@ -1,0 +1,9 @@
+{% extends 'manage/manage_users.html' %}
+
+{% block entity_type %}
+    Tutors
+{% endblock %} 
+
+{% block action_buttons %}
+    <a href="{% url 'get_tutor' user.id %}" class="btn btn-primary btn-sm" >View</a>
+{% endblock %}

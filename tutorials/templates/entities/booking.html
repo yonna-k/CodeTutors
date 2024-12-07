@@ -1,0 +1,45 @@
+{% extends 'base_content.html' %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mb-4">Booking #{{ booking.id }}</p></h2>
+
+            <div class="mb-3">
+                <p><strong>Student</strong>: {{ booking.student.username }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Date</strong>: {{ booking.date }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Time</strong>: {{ booking.time }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Venue</strong>: {{ booking.venue }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Frequency</strong>: {{ booking.frequency }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Duration</strong>: {{ booking.duration }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Day</strong>: {{ booking.day }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Language</strong>: {{ booking.lang }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Status</strong>: {{ booking.status }}</p>
+            </div>
+
+            <a href="{% url 'manage_bookings' %}" class="btn btn-primary">OK</a>
+            <a href="{% url 'delete_booking' booking.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
+                Delete
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
