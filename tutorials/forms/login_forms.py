@@ -120,6 +120,7 @@ class StudentSignUpForm(NewPasswordMixin, forms.ModelForm):
         user.role = 'student'
         user.save()
 
+
         Student.objects.create(user=user)
 
         return user

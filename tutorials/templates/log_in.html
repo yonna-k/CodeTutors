@@ -1,16 +1,18 @@
 {% extends 'base_content.html' %}
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12 col-md-6 offset-md-3">
-      <h1>Log in</h1>
+  <div class="container-fluid d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(to right, #2c3e50, #3498db);">
+    <div class="text-center text-white p-5 rounded shadow-lg" style="max-width: 600px; background-color: rgba(0, 0, 0, 0.6);">
+      <h1 class="display-4 font-weight-bold mb-4">Log In</h1>
+
       <form action="{% url 'log_in' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}">
         {% include 'partials/bootstrap_form.html' with form=form %}
-        <input type="submit" value="Log in" class="btn btn-primary">
+
+        <div class="mt-4">
+          <input type="submit" value="Log In" class="btn btn-warning btn-lg btn-block rounded-pill">
+        </div>
       </form>
     </div>
   </div>
-</div>
 {% endblock %}

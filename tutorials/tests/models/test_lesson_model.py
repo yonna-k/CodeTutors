@@ -1,29 +1,36 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
-from tutorials.models.lesson_models import Lesson
-from tutorials.models.booking_models import Booking
-from tutorials.models.student_models import Student
-from tutorials.models.tutor_model import Tutor
+from tutorials.models import Lesson
+from tutorials.models import Booking
+from tutorials.models import Student
+from tutorials.models import Tutor
+from tutorials.models import User
 from django.contrib.auth.hashers import make_password
 
 class LessonModelTest(TestCase):
     def setUp(self):
-        self.student = Student.objects.create(
+
+        student_user = User.objects.create_user(
             username='@teststudent',
-            password=make_password('Password123'), 
+            password=make_password('Password123'),
             first_name='Test',
             last_name='Student',
             email='teststudent@example.com',
-            level='BEGINNER'
         )
 
-        self.tutor = Tutor.objects.create(
+        self.student = Student.objects.create(user=student_user, level='BEGINNER')
+
+        tutor_user = User.objects.create_user(
             username="@testtutor",
             password=make_password('Password123'),
             first_name="Test",
             last_name="Tutor",
             email="testtutor@example.com",
+        )
+
+        # Create the associated Student instance
+        self.tutor = Tutor.objects.create(user=tutor_user,
             specializes_in_python=True,
             specializes_in_java=False,
             specializes_in_C=True,
@@ -36,8 +43,8 @@ class LessonModelTest(TestCase):
             available_friday=True,
             available_saturday=False,
             available_sunday=False,
-            rate=9.00,  # Hourly rate in the preferred currency
-        )
+            rate=9.00,)
+
 
         self.booking = Booking.objects.create(
             student = self.student,
@@ -58,14 +65,18 @@ class LessonModelTest(TestCase):
         self._assert_lesson_is_valid()
 
     def test_lesson_str(self):
-        expected_str = f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor.first_name}, costing {self.lesson.invoice}"
+        expected_str = (
+        f"Lesson on {self.booking.date} at {self.booking.time} "
+        f"with Tutor {self.tutor.user.first_name}, costing {self.lesson.invoice}"
+        )
         self.assertEqual(str(self.lesson), expected_str)
+
 
     def test_lesson_deletes_when_booking_deletes(self):
         self.booking.delete()
         with self.assertRaises(Lesson.DoesNotExist):
             Lesson.objects.get(id=self.lesson.id)
-    
+
     def test_lesson_deletes_when_tutor_deletes(self):
         self.tutor.delete()
         with self.assertRaises(Lesson.DoesNotExist):
@@ -75,12 +86,12 @@ class LessonModelTest(TestCase):
         invalid_booking = Booking.objects.filter(id=999).first()
         self.lesson.booking = invalid_booking
         self._assert_lesson_is_invalid()
-    
+
     def test_invalid_tutor_foreign_key(self):
         invalid_tutor = Tutor.objects.filter(id=999).first()
         self.lesson.tutor = invalid_tutor
         self._assert_lesson_is_invalid()
-    
+
     def test_booking_can_have_only_one_lesson(self):
         with self.assertRaises(IntegrityError):
             Lesson.objects.create(

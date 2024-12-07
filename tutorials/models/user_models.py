@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from libgravatar import Gravatar
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -91,6 +92,11 @@ class Tutor(models.Model):
         help_text="Enter your preferred hourly rate: "
     )
 
+    def clean(self):
+        super().clean()
+        if self.rate < 0:
+            raise ValidationError("Rate cannot be negative.")
+
 
     def get_specialties(self):
 
@@ -127,7 +133,7 @@ class Tutor(models.Model):
     def __str__(self):
         specialties = ', '.join(self.get_specialties()) or 'None'
         availability = 'Available' if any([self.available_monday, self.available_tuesday, self.available_wednesday, self.available_thursday, self.available_friday, self.available_saturday, self.available_sunday]) else 'Not Available'
-        return f"{self.first_name} - {specialties} ({availability})"
+        return f"{self.user.first_name} - {specialties} ({availability})"
 
 class Student(models.Model):
 
@@ -144,6 +150,7 @@ class Student(models.Model):
     ]
 
     level = models.CharField(max_length=12, choices=LEVEL_CHOICES, default='BEGINNER')
+
 
     def save(self, *args, **kwargs):
         if not self.user_id:
@@ -241,4 +248,4 @@ class Lesson(models.Model):
         return 0  #default to 0 if rate is missing
 
     def __str__(self):
-        return f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor.first_name}, costing {self.invoice}"
+        return f"Lesson on {self.booking.date} at {self.booking.time} with Tutor {self.tutor.user.first_name}, costing {self.invoice}"

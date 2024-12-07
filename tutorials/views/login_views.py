@@ -142,8 +142,16 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         """Return redirect URL after successful update."""
         messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
-        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
+        # Redirect based on user role
+        if self.request.user.role == 'student':
+            return reverse('student_dashboard')  # Replace with your student dashboard URL name
+        elif self.request.user.role == 'tutor':
+            return reverse('tutor_dashboard')  # Replace with your tutor dashboard URL name
+        elif self.request.user.role == 'admin':
+            return reverse('admin_dashboard')  # Replace with your admin dashboard URL name
+        else:
+            return reverse('dashboard')  # Fallback for unexpected roles
 
 class StudentSignUpView(LoginProhibitedMixin, FormView):
     """Handle student sign-ups."""
