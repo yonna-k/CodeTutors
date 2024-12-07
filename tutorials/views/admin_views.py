@@ -26,12 +26,12 @@ def manage_tutors(request):
 def manage_bookings(request):
     "Renders the manage entities template with booking data"
     bookings = Booking.objects.all().order_by('id')
-    return render(request, "manage/manage_bookings.html", {'bookings': bookings, 'entity_name': "booking"})
+    return render(request, "manage/manage_bookings.html", {'bookings': bookings})
 
 def manage_lessons(request):
     "Renders the manage entities template with lesson data"
     lessons = Lesson.objects.all().order_by('id')
-    return render(request, "manage/manage_lessons.html", {'lessons': lessons, 'entity_name': "lesson"})
+    return render(request, "manage/manage_lessons.html", {'lessons': lessons})
 
 def get_user(request, id):
     "Renders the specific user template"
@@ -42,7 +42,7 @@ def get_user(request, id):
     return render(request, 'entities/user.html', context)
 
 def get_student(request, id):
-    "Renders the specific user template"
+    "Renders the specific student template"
     try:
         context = {'user': Student.objects.get(pk=id)}
     except Student.DoesNotExist:
@@ -50,7 +50,7 @@ def get_student(request, id):
     return render(request, 'entities/student.html', context)
 
 def get_tutor(request, id):
-    "Renders the specific user template"
+    "Renders the specific tutor template"
     try:
         context = {'user': Tutor.objects.get(pk=id)}
     except Tutor.DoesNotExist:
@@ -75,6 +75,7 @@ def get_lesson(request, id):
     return render(request, 'entities/lesson.html', context)
 
 def delete_user(request, id):
+    "Delete the specified user"
     try:
         user = User.objects.get(pk=id)
         user.delete()
@@ -83,6 +84,7 @@ def delete_user(request, id):
     return redirect('manage/manage_users')
 
 def delete_booking(request, id):
+    "Delete the specified booking"
     try:
         booking = Booking.objects.get(pk=id)
         booking.delete()
@@ -91,6 +93,7 @@ def delete_booking(request, id):
     return redirect('manage/manage_bookings')
 
 def delete_lesson(request, id):
+    "Delete the specific lesson"
     try:
         lesson = Lesson.objects.get(pk=id)
         lesson.delete()
