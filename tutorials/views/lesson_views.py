@@ -43,8 +43,6 @@ def assign_tutor(request, booking_id):
                 booking.save()
                 messages.success(request, "Booking details updated successfully!")
                 return redirect("assign_tutor", booking_id=booking.id)
-            else:
-                print("Form errors:", booking_form.errors)
         #if tutor is assigned
         elif 'assign_tutor' in request.POST: 
             if assign_form.is_valid():
@@ -59,9 +57,6 @@ def assign_tutor(request, booking_id):
                     booking.delete()
                     messages.success(request, "Tutor assigned successfully and further lessons booked!")
                     return redirect("dashboard")
-                
-            if not assign_form.is_valid():
-                print(f"Form errors: {assign_form.errors}")
 
     else:
         assign_form = AssignTutorForm(tutors=tutors)

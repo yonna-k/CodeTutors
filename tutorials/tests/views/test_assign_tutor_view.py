@@ -125,6 +125,16 @@ class AssignTutorViewTest(TestCase):
 
     def test_assign_tutor_invalid_form(self):
         #test that an invalid AssignTutorForm does not create lessons
+        r = self.client.post(self.url, {
+            "save_changes": "",
+            "date": "2025-01-06",
+            "time": "14:30:00",
+            "frequency": "weekly",
+            "duration": "short",
+            "day": "Monday",
+            "lang": "Python",
+            "status" : "OPEN"
+        })
         response = self.client.post(self.url, {
             "assign_tutor": "",
             "tutor": 999,  #nonexistent tutor
