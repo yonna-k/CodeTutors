@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, SignUpForm
+from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, StudentSignUpForm, TutorSignUpForm
 from tutorials.helpers import login_prohibited
 
 
@@ -16,8 +16,16 @@ from tutorials.helpers import login_prohibited
 def dashboard(request):
     """Display the current user's dashboard."""
 
-    current_user = request.user
-    return render(request, 'dashboard.html', {'user': current_user})
+    thisUser = request.user
+
+    if thisUser.role == 'student':
+        return render(request, 'student_dashboard.html', {'user': thisUser})
+    elif thisUser.role == 'tutor':
+        return render(request, 'tutor_dashboard.html', {'user': thisUser})
+    elif thisUser.role == 'admin':
+        return render(request, 'admin_dashboard.html', {'user': thisUser})
+    else:
+        return render(request, 'dashboard.html', {'user': thisUser})
 
 
 @login_prohibited
@@ -134,17 +142,42 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         """Return redirect URL after successful update."""
         messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
-        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
+        # Redirect based on user role
+        if self.request.user.role == 'student':
+            return reverse('student_dashboard')  # Replace with your student dashboard URL name
+        elif self.request.user.role == 'tutor':
+            return reverse('tutor_dashboard')  # Replace with your tutor dashboard URL name
+        elif self.request.user.role == 'admin':
+            return reverse('admin_dashboard')  # Replace with your admin dashboard URL name
+        else:
+            return reverse('dashboard')  # Fallback for unexpected roles
 
-class SignUpView(LoginProhibitedMixin, FormView):
-    """Display the sign up screen and handle sign ups."""
+class StudentSignUpView(LoginProhibitedMixin, FormView):
+    """Handle student sign-ups."""
 
-    form_class = SignUpForm
-    template_name = "sign_up.html"
+    form_class = StudentSignUpForm
+    template_name = "student_sign_up.html"
     redirect_when_logged_in_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
 
     def form_valid(self, form):
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+
+
+class TutorSignUpView(LoginProhibitedMixin, FormView):
+    """Handle tutor sign-ups."""
+
+    form_class = TutorSignUpForm
+    template_name = "tutor_sign_up.html"
+    redirect_when_logged_in_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
+
+    def form_valid(self, form):
+        """Save the tutor and set specialties."""
         self.object = form.save()
         login(self.request, self.object)
         return super().form_valid(form)
