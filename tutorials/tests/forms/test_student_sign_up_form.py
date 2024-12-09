@@ -1,7 +1,8 @@
 from django import forms
 from django.test import TestCase
 from tutorials.forms import StudentSignUpForm
-from tutorials.models.user_models import User, Student
+from tutorials.models.user_models import User
+from tutorials.models.student_model import Student
 
 class StudentSignUpFormTestCase(TestCase):
     """Unit tests for the student sign up form."""

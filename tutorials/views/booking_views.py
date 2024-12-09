@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from tutorials.forms.booking_forms import BookingForm
-from tutorials.models import Student
+from tutorials.models.student_model import Student
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 

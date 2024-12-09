@@ -2,7 +2,9 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from tutorials.models.user_models import User, Tutor, Student
+from tutorials.models.user_models import User
+from tutorials.models.tutor_model import Tutor
+from tutorials.models.student_model import Student
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""

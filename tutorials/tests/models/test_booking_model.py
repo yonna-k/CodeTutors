@@ -1,8 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
-from tutorials.models import Booking
-from tutorials.models import Student, User
+from tutorials.models.booking_model import Booking
+from tutorials.models.student_model import Student
+from tutorials.models.user_models import User
 from django.contrib.auth.hashers import make_password
 
 class BookingModelTestCase(TestCase):
@@ -238,3 +239,25 @@ class BookingModelTestCase(TestCase):
     def _assert_booking_is_invalid(self):
         with self.assertRaises(ValidationError):
             self.booking.full_clean()
+
+
+    #tests for status
+    def test_status_cannot_be_empty(self):
+        self.booking.status = ""
+        self._assert_booking_is_invalid()
+
+    def test_status_can_be_open(self):
+        self.booking.status = "OPEN"
+        self._assert_booking_is_valid()
+
+    def test_status_can_be_closed(self):
+        self.booking.status = "CLOSED"
+        self._assert_booking_is_valid()
+
+    def test_status_must_be_valid_choice(self):
+        self.booking.status = "IN REVIEW"
+        self._assert_booking_is_invalid()
+
+    def test_status_max_length_ten(self):
+        self.booking.status = "OPEN          "
+        self._assert_booking_is_invalid()

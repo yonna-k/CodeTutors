@@ -1,7 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.contrib.auth.hashers import make_password
-from tutorials.models import User, Tutor
+from tutorials.models.user_models import User
+from tutorials.models.tutor_model import Tutor
 
 class TutorModelTestCase(TestCase):
     """Unit tests for the Tutor model."""

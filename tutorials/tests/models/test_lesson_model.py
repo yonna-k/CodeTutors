@@ -1,11 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
-from tutorials.models import Lesson
-from tutorials.models import Booking
-from tutorials.models import Student
-from tutorials.models import Tutor
-from tutorials.models import User
+from tutorials.models.lesson_model import Lesson
+from tutorials.models.booking_model import Booking
+from tutorials.models.student_model import Student
+from tutorials.models.tutor_model import Tutor
+from tutorials.models.user_models import User
 from django.contrib.auth.hashers import make_password
 
 class LessonModelTest(TestCase):

@@ -3,7 +3,8 @@ from django.contrib.auth.hashers import check_password
 from django.test import TestCase
 from django.urls import reverse
 from tutorials.forms.login_forms import TutorSignUpForm
-from tutorials.models.user_models import User, Tutor
+from tutorials.models.user_models import User
+from tutorials.models.tutor_model import Tutor
 from tutorials.tests.helpers import LogInTester
 
 class TutorSignUpViewTestCase(TestCase, LogInTester):

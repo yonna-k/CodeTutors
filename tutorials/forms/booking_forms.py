@@ -2,7 +2,7 @@ from datetime import date, timedelta, time
 from dateutil import easter
 from dateutil.relativedelta import relativedelta, MO, SU
 from django import forms
-from tutorials.models import Booking
+from tutorials.models.booking_model import Booking
 
 class BookingForm(forms.ModelForm):
     class Meta:

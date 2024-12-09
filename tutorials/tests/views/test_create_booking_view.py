@@ -1,9 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 from tutorials.forms.booking_forms import BookingForm
-from tutorials.models import Booking
-from tutorials.models import Student
-from tutorials.models.user_models import User, Tutor
+from tutorials.models.booking_model import Booking
+from tutorials.models.student_model import Student
+from tutorials.models.user_models import User
+from tutorials.models.tutor_model import Tutor
 from django.contrib.auth.hashers import make_password
 from django.contrib.messages import get_messages
 

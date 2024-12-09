@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from tutorials.models import Student, User
+from tutorials.models.student_model import Student
+from tutorials.models.user_models import User
 from django.contrib.auth.hashers import make_password
 
 class StudentModelTestCase(TestCase):
