@@ -1,9 +1,18 @@
 from django.db import models
+from .user_models import User
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
-from . import User
+from django.core.exceptions import ValidationError
 
-class Tutor(User):
-    
+
+class Tutor(models.Model):
+
+    # id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='tutor_profile'
+    )
 
     # Specialties - Example list of specialties as BooleanFields
     specializes_in_python = models.BooleanField(default=False)
@@ -21,20 +30,22 @@ class Tutor(User):
     available_saturday = models.BooleanField(default=False)
     available_sunday = models.BooleanField(default=False)
 
-    # Hourly rate 
+    # Hourly rate
     rate = models.DecimalField(
-        max_digits=3,  # Maximum digits including decimal places
+        max_digits=5,  # Maximum digits including decimal places
         decimal_places=2,  # Decimal places for currency
         validators=[MinValueValidator(0)],
         help_text="Enter your preferred hourly rate: "
     )
 
-    class Meta:
-       
-        ordering = ['specialty', '-availability']
+    def clean(self):
+        super().clean()
+        if self.rate < 0:
+            raise ValidationError("Rate cannot be negative.")
+
 
     def get_specialties(self):
-        
+
         specialties = [
             "Python" if self.specializes_in_python else None,
             "Java" if self.specializes_in_java else None,
@@ -57,6 +68,15 @@ class Tutor(User):
         ]
         return [day for day in availability if day]
 
+    def save(self, *args, **kwargs):
+        if not self.user_id:
+            user = User.objects.create(username=f'tutor_{self.pk}')
+            user.role = 'tutor'
+            user.save()
+            self.user = user
+        super(Tutor, self).save(*args, **kwargs)
+
     def __str__(self):
-        
-        return f"{self.first_name} - {self.specialty} ({'Available' if self.availability else 'Not Available'})"
+        specialties = ', '.join(self.get_specialties()) or 'None'
+        availability = 'Available' if any([self.available_monday, self.available_tuesday, self.available_wednesday, self.available_thursday, self.available_friday, self.available_saturday, self.available_sunday]) else 'Not Available'
+        return f"{self.user.first_name} - {specialties} ({availability})"

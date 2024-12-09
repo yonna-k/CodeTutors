@@ -1,0 +1,83 @@
+{% extends 'base_content.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 offset-md-3">
+            <h1>Request A Booking</h1>
+            <p>[ please note - this is just a request for your desired lesson - our admin team will manually approve each request, so your actual time/date may differ if there are conflicts ]</p>
+            <p>your lessons will start in the next term!</p>
+            <form action="{% url 'create_booking' %}" method="post">
+                {% csrf_token %}
+                <!-- Render Day Field -->
+                <div class="mb-3">
+                    <label for="{{ form.day.id_for_label }}">Day:</label>
+                    <select name="day" id="{{ form.day.id_for_label }}" class="form-control">
+                        {% for value, label in form.day.field.choices %}
+                            <option value="{{ value }}" {% if form.day.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.day.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Render Time Field -->
+                <div class="mb-3">
+                    <label for="{{ form.time.id_for_label }}">Time:</label>
+                    <input type="time" name="time" id="{{ form.time.id_for_label }}" 
+                           value="{{ form.time.value|default_if_none:'' }}" 
+                           class="form-control {% if form.time.errors %}is-invalid{% endif %}">
+                    {% for error in form.time.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Render Frequency Field -->
+                <div class="mb-3">
+                    <label for="{{ form.frequency.id_for_label }}">Frequency:</label>
+                    <select name="frequency" id="{{ form.frequency.id_for_label }}" class="form-control">
+                        {% for value, label in form.frequency.field.choices %}
+                            <option value="{{ value }}" {% if form.frequency.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.frequency.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Render Duration Field -->
+                <div class="mb-3">
+                    <label for="{{ form.duration.id_for_label }}">Duration:</label>
+                    <select name="duration" id="{{ form.duration.id_for_label }}" class="form-control">
+                        {% for value, label in form.duration.field.choices %}
+                            <option value="{{ value }}" {% if form.duration.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.duration.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Render Programming Language Field -->
+                <div class="mb-3">
+                    <label for="{{ form.lang.id_for_label }}">Language:</label>
+                    <select name="lang" id="{{ form.lang.id_for_label }}" class="form-control">
+                        {% for value, label in form.lang.field.choices %}
+                            <option value="{{ value }}" {% if form.lang.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% for error in form.lang.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mb-3">
+                    <input type="submit" value="Submit Booking" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
