@@ -34,6 +34,7 @@ class Tutor(models.Model):
         max_digits=5,  # Maximum digits including decimal places
         decimal_places=2,  # Decimal places for currency
         validators=[MinValueValidator(0)],
+        default=0.00,
         help_text="Enter your preferred hourly rate: "
     )
 

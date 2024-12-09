@@ -119,6 +119,7 @@ class StudentSignUpForm(NewPasswordMixin, forms.ModelForm):
 
         # Set the role after the user is created
         role = self.cleaned_data.get('role')
+        level = self.cleaned_data.get('level')
         user.role = 'student'
         user.save()
 
@@ -130,29 +131,33 @@ class StudentSignUpForm(NewPasswordMixin, forms.ModelForm):
 class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling unregistered users to sign up."""
 
-    specializes_in_python = forms.ChoiceField(
-        choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        ],
-        initial='No',
-        widget=forms.Select,  # Ensures it renders as a dropdown
-        label='Python'
-    )
-    specializes_in_java = forms.ChoiceField(
-        choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        ],
-        initial='No',
-        widget=forms.Select,  # Ensures it renders as a dropdown
-        label='Java'
-    )
+    LANGUAGES = ['Python', 'Java', 'C', 'Ruby', 'SQL']
+
+    for lang in LANGUAGES:
+        field_name = f'specializes_in_{lang}'
+        vars()[field_name] = forms.ChoiceField(
+            choices=[('Yes', 'Yes'), ('No', 'No')],
+            initial='No',
+            widget=forms.Select,
+            label=lang
+        )
+
+    # same for availability (like we did for languages)
+    Days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    for day in Days:
+        field_name = f'available_{day}'
+        vars()[field_name] = forms.ChoiceField(
+            choices=[('Yes', 'Yes'), ('No', 'No')],
+            initial='No',
+            widget=forms.Select,
+            label=day
+        )
 
     class Meta:
         """Form options."""
         model = User
-        fields = ['first_name', 'last_name', 'username', 'specializes_in_python', 'specializes_in_java', 'email']
+        fields = ['first_name', 'last_name', 'username', 'email', 'specializes_in_Python', 'specializes_in_Java', 'specializes_in_C', 'specializes_in_Ruby', 'specializes_in_SQL',
+                  'available_Monday', 'available_Tuesday', 'available_Wednesday', 'available_Thursday', 'available_Friday', 'available_Saturday', 'available_Sunday']
 
     def save(self, commit=True):
         """Create a new user."""
@@ -166,6 +171,18 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
 
         # Set the role after the user is created
         role = self.cleaned_data.get('role')
+        specializes_in_Python = self.cleaned_data.get('specializes_in_Python')
+        specializes_in_Java = self.cleaned_data.get('specializes_in_Java')
+        specializes_in_C = self.cleaned_data.get('specializes_in_C')
+        specializes_in_Ruby = self.cleaned_data.get('specializes_in_Ruby')
+        specializes_in_SQL = self.cleaned_data.get('specializes_in_SQL')
+        available_Monday = self.cleaned_data.get('available_Monday')
+        available_Tuesday = self.cleaned_data.get('available_Tuesday')
+        available_Wednesday = self.cleaned_data.get('available_Wednesday')
+        available_Thursday = self.cleaned_data.get('available_Thursday')
+        available_Friday = self.cleaned_data.get('available_Friday')
+        available_Saturday = self.cleaned_data.get('available_Saturday')
+        available_Sunday = self.cleaned_data.get('available_Sunday')
         user.role = 'tutor'
         user.save()
 
