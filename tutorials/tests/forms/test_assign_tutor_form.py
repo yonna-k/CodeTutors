@@ -2,17 +2,23 @@ from django import forms
 from django.test import TestCase
 from tutorials.forms.lesson_forms import AssignTutorForm
 from tutorials.models.tutor_model import Tutor
+from tutorials.models.user_models import User
 from django.contrib.auth.hashers import make_password
 
 class AssignTutorFormTest(TestCase):
     def setUp(self):
         #create sample tutors for testing
-        self.tutor_1 = Tutor.objects.create(
-            username="@testtutor",
+        user = User.objects.create_user(
+            username='@testtutor',
             password=make_password('Password123'),
-            first_name="Test",
-            last_name="Tutor",
-            email="testtutor@example.com",
+            first_name='Test',
+            last_name='Tutor',
+            email='testtutor@example.com',
+            role = "tutor",
+        )
+
+        self.tutor_1 = Tutor.objects.create(
+            user=user,
             specializes_in_python=True,
             specializes_in_C=True,
             available_monday=True,
@@ -20,12 +26,17 @@ class AssignTutorFormTest(TestCase):
             rate=9.00,  # Hourly rate in the preferred currency
         )
 
-        self.tutor_2 = Tutor.objects.create(
-            username="@testtutor2",
+        user2 = User.objects.create_user(
+            username='@testtutor2',
             password=make_password('Password123'),
-            first_name="Test2",
-            last_name="Tutor2",
-            email="testtutor2@example.com",
+            first_name='Test2',
+            last_name='Tutor2',
+            email='testtutor2@example.com',
+            role = "tutor",
+        )
+
+        self.tutor_2 = Tutor.objects.create(
+            user=user2,
             specializes_in_python=True,
             available_monday=True,
             available_wednesday=True,
@@ -69,5 +80,5 @@ class AssignTutorFormTest(TestCase):
     
     def test_form_handles_dynamic_queryset(self):
         #test that the form respects the dynamically provided queryset
-        form = AssignTutorForm(tutors=Tutor.objects.filter(first_name="Test"))
+        form = AssignTutorForm(tutors=Tutor.objects.filter(user__first_name="Test"))
         self.assertEqual(list(form.fields['tutor'].queryset), [self.tutor_1])

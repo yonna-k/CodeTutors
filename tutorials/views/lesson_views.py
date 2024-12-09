@@ -3,9 +3,9 @@ from django.contrib import messages
 from datetime import datetime, timedelta
 from django.db import transaction
 from tutorials.forms.booking_forms import BookingForm
-from tutorials.models.booking_models import Booking
+from tutorials.models.booking_model import Booking
 from tutorials.models.tutor_model import Tutor
-from tutorials.models.lesson_models import Lesson
+from tutorials.models.lesson_model import Lesson
 from tutorials.forms.lesson_forms import AssignTutorForm
 
 def assign_tutor(request, booking_id):

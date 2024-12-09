@@ -12,7 +12,7 @@ class AssignTutorForm(forms.Form):
         tutors = kwargs.pop('tutors', Tutor.objects.none())
         super().__init__(*args, **kwargs)
         self.fields['tutor'].queryset = tutors
-        self.fields['tutor'].label_from_instance = lambda obj: f"{obj.first_name} {obj.last_name}"
+        self.fields['tutor'].label_from_instance = lambda obj: f"{obj.user.first_name} {obj.user.last_name}"
 
     def clean(self):
         cleaned_data = super().clean()

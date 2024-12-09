@@ -2,9 +2,10 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.messages import get_messages
 from tutorials.models.tutor_model import Tutor
-from tutorials.models.student_models import Student
-from tutorials.models.booking_models import Booking
-from tutorials.models.lesson_models import Lesson
+from tutorials.models.student_model import Student
+from tutorials.models.booking_model import Booking
+from tutorials.models.lesson_model import Lesson
+from tutorials.models.user_models import User
 from tutorials.forms.lesson_forms import AssignTutorForm
 from tutorials.forms.booking_forms import BookingForm
 from datetime import date, datetime, time
@@ -13,12 +14,16 @@ from django.contrib.auth.hashers import make_password
 class AssignTutorViewTest(TestCase):
     def setUp(self):
         #create sample tutors for testing
-        self.tutor_1 = Tutor.objects.create(
-            username="@testtutor",
+        user = User.objects.create_user(
+            username='@testtutor',
             password=make_password('Password123'),
-            first_name="Test",
-            last_name="Tutor",
-            email="testtutor@example.com",
+            first_name='Test',
+            last_name='Tutor',
+            email='testtutor@example.com',
+            role = "tutor",
+        )
+        self.tutor_1 = Tutor.objects.create(
+            user=user,
             specializes_in_python=True,
             specializes_in_C=True,
             available_monday=True,
@@ -26,24 +31,34 @@ class AssignTutorViewTest(TestCase):
             rate=9.00,  # Hourly rate in the preferred currency
         )
 
-        self.tutor_2 = Tutor.objects.create(
-            username="@testtutor2",
+        user2 = User.objects.create_user(
+            username='@testtutor2',
             password=make_password('Password123'),
-            first_name="Test2",
-            last_name="Tutor2",
-            email="testtutor2@example.com",
+            first_name='Test2',
+            last_name='Tutor2',
+            email='testtutor2@example.com',
+            role = "tutor"
+        )
+
+        self.tutor_2 = Tutor.objects.create(
+            user=user2,
             specializes_in_C=True,
             available_monday=True,
             available_wednesday=True,
             rate=10.00,  # Hourly rate in the preferred currency
         )
 
-        self.student = Student.objects.create(
+        user3 = User.objects.create_user(
             username='@teststudent',
             password=make_password('Password123'),
             first_name='Test',
             last_name='Student',
             email='teststudent@example.com',
+            role = "student"
+        )
+
+        self.student = Student.objects.create(
+            user = user3,
             level='BEGINNER'
         )
 
