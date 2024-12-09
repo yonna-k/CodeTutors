@@ -20,17 +20,23 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'user': current_user})
 
 # TODO: review implementation
-@login_required
+#@login_required
 def student_dashboard(request):
     """Display the student's dashboard."""
     current_user = request.user
     return render(request, 'student_dashboard.html', {'user': current_user})
 
-@login_required
+#@login_required
 def tutor_dashboard(request):
     """Display the tutor's dashboard."""
     current_user = request.user
     return render(request, 'tutor_dashboard.html', {'user': current_user})
+
+def create_booking(request):
+    if request.method == "POST":
+        # Handle booking form submission
+        pass
+    return render(request, 'create_booking.html')
 
 
 @login_prohibited
