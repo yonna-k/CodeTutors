@@ -19,7 +19,7 @@ class Student(models.Model):
     level = models.CharField(max_length=12, choices=LEVEL_CHOICES, default='BEGINNER')
 
     def __str__(self):
-        return f"{self.first_name} ({self.level})"
+        return f"{self.user.first_name} ({self.level})"
 
     def save(self, *args, **kwargs):
         if not self.user_id:
