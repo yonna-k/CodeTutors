@@ -10,15 +10,16 @@ class Tutor(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='tutor_profile'
+        related_name='tutor_profile',
+        primary_key=True
     )
 
     # Specialties - Example list of specialties as BooleanFields
     specializes_in_python = models.BooleanField(default=False)
     specializes_in_java = models.BooleanField(default=False)
-    specializes_in_C = models.BooleanField(default=False)
+    specializes_in_c = models.BooleanField(default=False)
     specializes_in_ruby = models.BooleanField(default=False)
-    specializes_in_SQL = models.BooleanField(default=False)
+    specializes_in_sql = models.BooleanField(default=False)
 
     # Availability - Days of the week (True if available)
     available_monday = models.BooleanField(default=False)
@@ -48,9 +49,9 @@ class Tutor(models.Model):
         specialties = [
             "Python" if self.specializes_in_python else None,
             "Java" if self.specializes_in_java else None,
-            "C" if self.specializes_in_C else None,
+            "C" if self.specializes_in_c else None,
             "Ruby" if self.specializes_in_ruby else None,
-            "SQL" if self.specializes_in_SQL else None,
+            "SQL" if self.specializes_in_sql else None,
         ]
         return [specialty for specialty in specialties if specialty]
 

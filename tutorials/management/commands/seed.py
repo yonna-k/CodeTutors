@@ -1,21 +1,26 @@
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
-from tutorials.models import User, Tutor, Student, Booking, Lesson
+from tutorials.models import Admin, User, Tutor, Student, Booking, Lesson
 import pytz
 from faker import Faker
 from random import randint, choice, random, uniform
 from datetime import datetime, timedelta, time
 
-#TODO: Add admin model seeder!
-
-# Predefined users with roles (Tutor/Student)
+# Predefined users with roles (Admin/Tutor/Student)
 user_fixtures = [
+    {
+        'username': '@johndoe',
+        'email': 'john.doe@example.org',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'role': 'admin_profile',
+    },
     {
         'username': '@janedoe',
         'email': 'jane.doe@example.org',
         'first_name': 'Jane',
         'last_name': 'Doe',
-        'role': 'tutor',
+        'role': 'tutor_profile',
         'rate': 50.00,
         'specializes_in_python': True,
         'specializes_in_java': False,
@@ -28,10 +33,30 @@ user_fixtures = [
         'email': 'charlie.johnson@example.org',
         'first_name': 'Charlie',
         'last_name': 'Johnson',
-        'role': 'student',
+        'role': 'student_profile',
         'level': 'BEGINNER',
     }
-] # fixed bookings and lessons assigned below
+]
+
+booking_fixtures = [
+    {
+        'student_username': '@charlie',
+        'date': '2023-12-15',
+        'time': '10:00:00',
+        'frequency': 'weekly',
+        'duration': 'short',
+        'day': 'Monday',
+        'lang': 'Python',
+    }
+]
+
+lesson_fixtures = [
+    {
+        'student_username': '@charlie',
+        'tutor_username': '@janedoe',
+    }
+]
+
 
 class Command(BaseCommand):
     USER_COUNT = 200
@@ -46,24 +71,18 @@ class Command(BaseCommand):
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
-        self.create_users()
+        self.create_fixed_users()
+        self.create_fixed_lessons()
         self.create_tutors()
         self.create_students()
-        self.create_fixed_lesson()
         self.create_bookings()
         self.create_lessons()
         print("Seeding complete.")
 
-    def create_users(self):
+    def create_fixed_users(self):
         """Create predefined users from user_fixtures."""
         for data in user_fixtures:
-            role = data.pop('role', 'user')
-            if role == 'tutor':
-                self.try_create_user(Tutor, data)
-            elif role == 'student':
-                self.try_create_user(Student, data)
-            else:
-                self.try_create_user(User, data)
+            self.try_create_user(data)
 
     def create_tutors(self):
         """Seed random Tutor objects."""
@@ -85,11 +104,12 @@ class Command(BaseCommand):
         username = create_username(first_name, last_name)
         level = choice(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'])
 
-        self.try_create_user(Student, {
+        self.try_create_user({
             'username': username,
             'email': email,
             'first_name': first_name,
             'last_name': last_name,
+            'role': 'student_profile',
             'level': level
         })
     
@@ -104,9 +124,9 @@ class Command(BaseCommand):
         specialties = {
             'specializes_in_python': random() > 0.5,
             'specializes_in_java': random() > 0.5,
-            'specializes_in_C': random() > 0.5,
+            'specializes_in_c': random() > 0.5,
             'specializes_in_ruby': random() > 0.5,
-            'specializes_in_SQL': random() > 0.5,
+            'specializes_in_sql': random() > 0.5,
         }
         availability = {
             'available_monday': random() > 0.5,
@@ -117,31 +137,47 @@ class Command(BaseCommand):
             'available_saturday': random() > 0.5,
             'available_sunday': random() > 0.5,
         }
-
-        self.try_create_user(Tutor, {
+        
+        self.try_create_user({
             'username': username,
             'email': email,
             'first_name': first_name,
             'last_name': last_name,
+            'role': 'tutor_profile',
             'rate': rate,
             **specialties,
             **availability
         })
 
-    def try_create_user(self, model, data):
+    def try_create_user(self, data):
         """Try to create a user."""
-        try:
-            user = model.objects.create_user(
+        try:  
+            role = data.pop('role', 'user')
+            profile_data = {k: v for k, v in data.items() if k not in ['username', 'email', 'password', 'first_name', 'last_name']}
+            
+            user = User.objects.create_user(
                 username=data['username'],
                 email=data['email'],
                 password=self.DEFAULT_PASSWORD,
                 first_name=data['first_name'],
                 last_name=data['last_name'],
-                **{k: v for k, v in data.items() if k not in ['username', 'email', 'password', 'first_name', 'last_name']}
             )
-            print(f"Created {model.__name__} #{user.id} ({user.username})")
+            print(f"Created User #{user.id} ({user.username})")
+
+            if role == 'tutor_profile':
+                Tutor.objects.create(user=user, **profile_data)
+                print(f"Created Tutor profile for User #{user.id} ({user.username})")
+            elif role == 'student_profile':
+                Student.objects.create(user=user, **profile_data)
+                print(f"Created Student profile for User #{user.id} ({user.username})")
+            elif role == 'admin_profile':
+                Admin.objects.create(user=user, **profile_data)
+                print(f"Created Admin profile for User #{user.id} ({user.username})")
+            else:
+                raise ValueError(f"Invalid role for user: {data.get('username')}.")
+
         except IntegrityError as e:
-            print(f"Error creating user ({data.get('username')}): {e}")
+            print(f"Error creating user {data.get('username')}: {e}")
             
     
     def create_bookings(self):
@@ -174,7 +210,7 @@ class Command(BaseCommand):
                 lang=lang,
             )
 
-            print(f"Booking #{booking.id} created: Student #{student.id} ({student.username}) requests {day}, {booking_date} at {booking_time}, for {duration} lessons in {lang}.")
+            print(f"Booking #{booking.id} created: Student #{student.user.id} ({student.user.username}) requests {day}, {booking_date} at {booking_time}, for {duration} lessons in {lang}.")
 
     def create_lessons(self):
         """Assign tutors to bookings and create lessons."""
@@ -209,53 +245,39 @@ class Command(BaseCommand):
                 booking=booking,
                 tutor=tutor,
             )
-            print(f"Lesson created for Booking #{booking.id} with Tutor #{tutor.id} ({tutor.username})")
+            print(f"Lesson created for Booking #{booking.id} with Tutor #{tutor.user.id} ({tutor.user.username})")
     
-    def create_fixed_booking(self):
-        """Create a booking for a predefined Student."""
-        student = Student.objects.get(username='@charlie')
-        booking_date = datetime.strptime("2024-12-31", "%Y-%m-%d").date()
-        booking_time = datetime.strptime("12:00:00", "%H:%M:%S").time()
-        frequency = 'weekly'
-        duration = 'short'
-        day = 'Monday'
-        lang = 'Python'
+    def create_fixed_bookings(self):
+        for booking_data in booking_fixtures:
+            try:
+                student = Student.objects.get(user__username=booking_data['student_username'])
+                booking = Booking.objects.create(
+                    student=student,
+                    date=booking_data['date'],
+                    time=booking_data['time'],
+                    frequency=booking_data['frequency'],
+                    duration=booking_data['duration'],
+                    day=booking_data['day'],
+                    lang=booking_data['lang']
+                )
+                print(f"Created fixed booking #{booking.id} for student {student.user.username} on {booking_data['date']} at {booking_data['time']}.")
+            except Student.DoesNotExist:
+                print(f"Student {booking_data['student_username']} does not exist.")
+ 
+    def create_fixed_lessons(self):
+        for lesson_data in lesson_fixtures:
+            try:
+                student = Student.objects.get(user__username=lesson_data['student_username'])
+                tutor = Tutor.objects.get(user__username=lesson_data['tutor_username'])
+                booking = Booking.objects.filter(student=student).first()
+                if booking:
+                    Lesson.objects.create(booking=booking, tutor=tutor)
+                    print(f"Created lesson for {tutor.user.username} with booking {booking.id} - {student.user.username} on {lesson_data['date']}.")
+            except Student.DoesNotExist:
+                print(f"Student {lesson_data['student_username']} does not exist.")
+            except Tutor.DoesNotExist:
+                print(f"Tutor {lesson_data['tutor_username']} does not exist.")
 
-        try:
-            booking, created = Booking.objects.get_or_create(
-                student=student,
-                date=booking_date,
-                time=booking_time,
-                frequency=frequency,
-                duration=duration,
-                day=day,
-                lang=lang,
-            )
-            if created:
-                print(f"Fixed Booking #{booking.id} created: Student #{student.id} ({student.username}) requests {day}, {booking_date} at {booking_time}, for {duration} lessons in {lang}.")
-            return booking
-
-        except (Student.DoesNotExist) as e:
-            print(f"Error creating fixed booking: {e}")
-    
-    def create_fixed_lesson(self):
-        """Create a fixed lesson for @charlie with @janedoe using the fixed booking."""
-        try:
-            booking = self.create_fixed_booking()  # Get the fixed booking for @charlie
-            booking.status = "CLOSED"
-            booking.save()
-            tutor = Tutor.objects.get(username='@janedoe')
-
-            lesson, created = Lesson.objects.get_or_create(
-                booking=booking,
-                tutor=tutor,
-            )
-            if created:
-                print(f"Fixed Lesson created for Booking #{booking.id} with Tutor #{tutor.id} ({tutor.username})")
-            return lesson
-        
-        except (Student.DoesNotExist, Tutor.DoesNotExist) as e:
-            print(f"Error creating fixed lesson: {e}")
 
 def create_username(first_name, last_name):
     return '@' + first_name.lower() + last_name.lower()
