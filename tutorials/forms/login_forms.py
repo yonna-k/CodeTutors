@@ -5,8 +5,6 @@ from django.core.validators import RegexValidator
 from tutorials.models.user_models import User
 from tutorials.models.tutor_model import Tutor
 from tutorials.models.student_model import Student
-from tutorials.models.admin_model import Admin
-
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -33,7 +31,6 @@ class UserForm(forms.ModelForm):
 
         model = User
         fields = ['first_name', 'last_name', 'username', 'email']
-
 
 class NewPasswordMixin(forms.Form):
     """Form mixing for new_password and password_confirmation fields."""
@@ -112,56 +109,84 @@ class StudentSignUpForm(NewPasswordMixin, forms.ModelForm):
 
     def save(self, commit=True):
         """Create a new user."""
+        # Create the user object first
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data.get('new_password'))
+        user.set_password(self.cleaned_data.get('new_password'))  # Set the password securely
 
-        # Correctly set attributes
-        user.role = 'student'
-        user.level = self.cleaned_data.get('level')
-
+        # Save the user object
         if commit:
             user.save()
-            Student.objects.create(user=user)
+
+        # Set the role after the user is created
+        role = self.cleaned_data.get('role')
+        level = self.cleaned_data.get('level')
+        user.role = 'student'
+        user.save()
+
+
+        Student.objects.create(user=user)
 
         return user
-
 
 class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling unregistered users to sign up."""
 
-    specializes_in_python = forms.ChoiceField(
-        choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        ],
-        initial='No',
-        widget=forms.Select,  # Ensures it renders as a dropdown
-        label='Python'
-    )
-    specializes_in_java = forms.ChoiceField(
-        choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        ],
-        initial='No',
-        widget=forms.Select,  # Ensures it renders as a dropdown
-        label='Java'
-    )
+    LANGUAGES = ['Python', 'Java', 'C', 'Ruby', 'SQL']
+
+    for lang in LANGUAGES:
+        field_name = f'specializes_in_{lang}'
+        vars()[field_name] = forms.ChoiceField(
+            choices=[('Yes', 'Yes'), ('No', 'No')],
+            initial='No',
+            widget=forms.Select,
+            label=lang
+        )
+
+    # same for availability (like we did for languages)
+    Days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    for day in Days:
+        field_name = f'available_{day}'
+        vars()[field_name] = forms.ChoiceField(
+            choices=[('Yes', 'Yes'), ('No', 'No')],
+            initial='No',
+            widget=forms.Select,
+            label=day
+        )
 
     class Meta:
         """Form options."""
         model = User
-        fields = ['first_name', 'last_name', 'username', 'specializes_in_python', 'specializes_in_java', 'email']
+        fields = ['first_name', 'last_name', 'username', 'email', 'specializes_in_Python', 'specializes_in_Java', 'specializes_in_C', 'specializes_in_Ruby', 'specializes_in_SQL',
+                  'available_Monday', 'available_Tuesday', 'available_Wednesday', 'available_Thursday', 'available_Friday', 'available_Saturday', 'available_Sunday']
 
     def save(self, commit=True):
-        """Create a new tutor."""
+        """Create a new user."""
+        # Create the user object first
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data.get('new_password'))
+        user.set_password(self.cleaned_data.get('new_password'))  # Set the password securely
 
-        user.role = 'tutor'
-
+        # Save the user object
         if commit:
             user.save()
-            Tutor.objects.create(user=user)
+
+        # Set the role after the user is created
+        role = self.cleaned_data.get('role')
+        specializes_in_Python = self.cleaned_data.get('specializes_in_Python')
+        specializes_in_Java = self.cleaned_data.get('specializes_in_Java')
+        specializes_in_C = self.cleaned_data.get('specializes_in_C')
+        specializes_in_Ruby = self.cleaned_data.get('specializes_in_Ruby')
+        specializes_in_SQL = self.cleaned_data.get('specializes_in_SQL')
+        available_Monday = self.cleaned_data.get('available_Monday')
+        available_Tuesday = self.cleaned_data.get('available_Tuesday')
+        available_Wednesday = self.cleaned_data.get('available_Wednesday')
+        available_Thursday = self.cleaned_data.get('available_Thursday')
+        available_Friday = self.cleaned_data.get('available_Friday')
+        available_Saturday = self.cleaned_data.get('available_Saturday')
+        available_Sunday = self.cleaned_data.get('available_Sunday')
+        user.role = 'tutor'
+        user.save()
+
+        Tutor.objects.create(user=user)
+
 
         return user

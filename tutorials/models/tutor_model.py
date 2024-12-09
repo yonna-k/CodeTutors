@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 from .user_models import User
-from django import forms
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
@@ -15,17 +14,11 @@ class Tutor(models.Model):
     )
 
     # Specialties - Example list of specialties as BooleanFields
-    SPECIALTIES = ['Python', 'Java', 'C', 'Ruby', 'SQL']
-
-    # Dynamically create specialty fields
-    for specialty in SPECIALTIES:
-        locals()[f'specializes_in_{specialty.lower()}'] = forms.ChoiceField(
-            choices=[('Yes', 'Yes'), ('No', 'No')],
-            initial='No',
-            widget=forms.Select,
-            label=specialty
-     )
-
+    specializes_in_python = models.BooleanField(default=False)
+    specializes_in_java = models.BooleanField(default=False)
+    specializes_in_C = models.BooleanField(default=False)
+    specializes_in_ruby = models.BooleanField(default=False)
+    specializes_in_SQL = models.BooleanField(default=False)
 
     # Availability - Days of the week (True if available)
     available_monday = models.BooleanField(default=False)
