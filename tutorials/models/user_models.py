@@ -1,10 +1,20 @@
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 from libgravatar import Gravatar
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
+
+    Roles = (
+        ('admin', 'Admin'),
+        ('tutor', 'Tutor'),
+        ('student', 'Student'),
+    )
 
     username = models.CharField(
         max_length=30,
@@ -17,6 +27,13 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    role = models.CharField(
+        max_length=15,
+        choices=Roles,
+        default='student',
+        blank=False
+    )
 
 
     class Meta:
@@ -29,6 +46,7 @@ class User(AbstractUser):
 
         return f'{self.first_name} {self.last_name}'
 
+
     def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""
 
@@ -38,5 +56,5 @@ class User(AbstractUser):
 
     def mini_gravatar(self):
         """Return a URL to a miniature version of the user's gravatar."""
-        
+
         return self.gravatar(size=60)

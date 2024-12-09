@@ -17,7 +17,7 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from tutorials.views import login_views
 from tutorials.views import booking_views
 from tutorials.views import lesson_views
@@ -26,11 +26,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_views.home, name='home'),
     path('dashboard/', login_views.dashboard, name='dashboard'),
+    path('dashboard/admin/', login_views.dashboard, name='admin_dashboard'),
+    path('dashboard/student/', login_views.dashboard, name='student_dashboard'),
+    path('dashboard/tutor/', login_views.dashboard, name='tutor_dashboard'),
     path('log_in/', login_views.LogInView.as_view(), name='log_in'),
     path('log_out/', login_views.log_out, name='log_out'),
     path('password/', login_views.PasswordView.as_view(), name='password'),
     path('profile/', login_views.ProfileUpdateView.as_view(), name='profile'),
-    path('sign_up/', login_views.SignUpView.as_view(), name='sign_up'),
+    path('sign_up/', include([
+        path('student/', login_views.StudentSignUpView.as_view(), name='student_sign_up'),
+        path('tutor/', login_views.TutorSignUpView.as_view(), name='tutor_sign_up'),
+    ])),
     path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
     path('dashboard/admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor")
 ]
