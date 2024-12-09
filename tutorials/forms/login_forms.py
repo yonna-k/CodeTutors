@@ -5,6 +5,8 @@ from django.core.validators import RegexValidator
 from tutorials.models.user_models import User
 from tutorials.models.tutor_model import Tutor
 from tutorials.models.student_model import Student
+from tutorials.models.admin_model import Admin
+
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -31,6 +33,7 @@ class UserForm(forms.ModelForm):
 
         model = User
         fields = ['first_name', 'last_name', 'username', 'email']
+
 
 class NewPasswordMixin(forms.Form):
     """Form mixing for new_password and password_confirmation fields."""
@@ -109,67 +112,40 @@ class StudentSignUpForm(NewPasswordMixin, forms.ModelForm):
 
     def save(self, commit=True):
         """Create a new user."""
-        # Create the user object first
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data.get('new_password'))  # Set the password securely
+        user.set_password(self.cleaned_data.get('new_password'))
 
-        # Save the user object
+        # Correctly set attributes
+        user.role = 'student'
+        user.level = self.cleaned_data.get('level')
+
         if commit:
             user.save()
-
-        # Set the role after the user is created
-        role = self.cleaned_data.get('role')
-        user.role = 'student'
-        user.save()
-
-
-        Student.objects.create(user=user)
+            Student.objects.create(user=user)
 
         return user
+
 
 class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
-    """Form enabling unregistered users to sign up."""
-
-    specializes_in_python = forms.ChoiceField(
-        choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        ],
-        initial='No',
-        widget=forms.Select,  # Ensures it renders as a dropdown
-        label='Python'
-    )
-    specializes_in_java = forms.ChoiceField(
-        choices=[
-            ('Yes', 'Yes'),
-            ('No', 'No'),
-        ],
-        initial='No',
-        widget=forms.Select,  # Ensures it renders as a dropdown
-        label='Java'
-    )
-
     class Meta:
-        """Form options."""
-        model = User
-        fields = ['first_name', 'last_name', 'username', 'specializes_in_python', 'specializes_in_java', 'email']
+        model = Tutor
+        fields = [
+            'specializes_in_python', 'specializes_in_java',
+            'specializes_in_C', 'specializes_in_ruby', 'specializes_in_SQL',
+            'available_monday', 'available_tuesday', 'available_wednesday',
+            'available_thursday', 'available_friday', 'available_saturday',
+            'available_sunday', 'rate'
+        ]
 
     def save(self, commit=True):
-        """Create a new user."""
-        # Create the user object first
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data.get('new_password'))  # Set the password securely
-
-        # Save the user object
+        user = User.objects.create_user(
+            username=self.cleaned_data['username'],
+            email=self.cleaned_data['email'],
+            password=self.cleaned_data['new_password'],
+            role='tutor'
+        )
+        tutor = super().save(commit=False)
+        tutor.user = user
         if commit:
-            user.save()
-
-        # Set the role after the user is created
-        role = self.cleaned_data.get('role')
-        user.role = 'tutor'
-        user.save()
-
-        Tutor.objects.create(user=user)
-
-
-        return user
+            tutor.save()
+        return tutor
