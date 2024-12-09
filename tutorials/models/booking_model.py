@@ -51,6 +51,5 @@ class Booking(models.Model):
     ]
     lang = models.CharField(max_length=20, choices=PLANG_CHOICES, default="Python")
 
-
     def __str__(self):
         return f"Requested: Booking for {self.student} on {self.date} at {self.time}"
