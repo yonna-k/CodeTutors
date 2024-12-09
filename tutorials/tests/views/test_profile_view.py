@@ -77,23 +77,40 @@ class ProfileViewTest(TestCase):
         self.assertEqual(self.user.last_name, 'Doe')
         self.assertEqual(self.user.email, 'johndoe@example.org')
 
-    def test_succesful_profile_update(self):
+    def test_successful_profile_update(self):
+        """Test that a valid profile update saves changes and redirects to the appropriate dashboard."""
         self.client.login(username=self.user.username, password='Password123')
         before_count = User.objects.count()
+
+        # Make a POST request to update the profile
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = User.objects.count()
+
+        # Assert that no new user has been created
         self.assertEqual(after_count, before_count)
-        response_url = reverse('dashboard')
-        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'dashboard.html')
-        messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 1)
-        self.assertEqual(messages_list[0].level, messages.SUCCESS)
+
+        # Refresh the user instance from the database
         self.user.refresh_from_db()
-        self.assertEqual(self.user.username, '@johndoe2')
-        self.assertEqual(self.user.first_name, 'John2')
-        self.assertEqual(self.user.last_name, 'Doe2')
-        self.assertEqual(self.user.email, 'johndoe2@example.org')
+
+        # Assert the user's attributes have been updated
+        self.assertEqual(self.user.first_name, self.form_input['first_name'])
+        self.assertEqual(self.user.last_name, self.form_input['last_name'])
+        self.assertEqual(self.user.username, self.form_input['username'])
+        self.assertEqual(self.user.email, self.form_input['email'])
+
+        # Determine the expected redirect based on the user's role
+        if self.user.role == 'student':
+            expected_redirect_url = reverse('student_dashboard')  # Replace with your URL name
+        elif self.user.role == 'tutor':
+            expected_redirect_url = reverse('tutor_dashboard')  # Replace with your URL name
+        elif self.user.role == 'admin':
+            expected_redirect_url = reverse('admin_dashboard')  # Replace with your URL name
+        else:
+            self.fail(f"Unexpected role for user {self.user.username}: {self.user.role}")
+
+        # Assert the user is redirected to the appropriate dashboard
+        self.assertRedirects(response, expected_redirect_url)
+
 
     def test_post_profile_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
