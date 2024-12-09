@@ -100,3 +100,13 @@ def delete_lesson(request, id):
     except Lesson.DoesNotExist:
         raise Http404(f"Could not find lesson with ID {id}")
     return redirect('manage/manage_lessons')
+
+#TODO:
+def update_user(request, id):
+    pass
+
+def update_booking(request, id):
+    pass
+
+def update_lesson(request, id):
+    pass

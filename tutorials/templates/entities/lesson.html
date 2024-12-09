@@ -41,7 +41,12 @@
                 <p><strong>Status</strong>: {{ lesson.booking.status }}</p>
             </div>
 
-            <a href="{% url 'manage_lessons' %}" class="btn btn-primary">OK</a>
+            <a href="{% url 'manage_lessons' %}" class="btn btn-primary">
+                OK
+            </a>
+            <a href="{% url 'update_lesson' lesson.id %}" class="btn btn-warning">
+                Edit
+            </a>            
             <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
                 Delete
             </a>

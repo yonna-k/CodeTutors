@@ -46,6 +46,11 @@ urlpatterns = [
     path('delete_booking/<int:id>/', admin_views.delete_booking, name='delete_booking'),
     path('delete_lesson/<int:id>/', admin_views.delete_lesson, name='delete_lesson'),
 
+    path('update_user/<int:id>/', admin_views.update_user, name='update_user'),
+    path('update_lesson/<int:id>/', admin_views.update_lesson, name='update_lesson'),
+    path('update_booking/<int:id>/', admin_views.update_booking, name='update_booking'),
+
+
     path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
