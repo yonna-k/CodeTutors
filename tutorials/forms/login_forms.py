@@ -127,25 +127,41 @@ class StudentSignUpForm(NewPasswordMixin, forms.ModelForm):
 
 
 class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
+    """Form enabling unregistered users to sign up."""
+
+    specializes_in_python = forms.ChoiceField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        ],
+        initial='No',
+        widget=forms.Select,  # Ensures it renders as a dropdown
+        label='Python'
+    )
+    specializes_in_java = forms.ChoiceField(
+        choices=[
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        ],
+        initial='No',
+        widget=forms.Select,  # Ensures it renders as a dropdown
+        label='Java'
+    )
+
     class Meta:
-        model = Tutor
-        fields = [
-            'specializes_in_python', 'specializes_in_java',
-            'specializes_in_C', 'specializes_in_ruby', 'specializes_in_SQL',
-            'available_monday', 'available_tuesday', 'available_wednesday',
-            'available_thursday', 'available_friday', 'available_saturday',
-            'available_sunday', 'rate'
-        ]
+        """Form options."""
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'specializes_in_python', 'specializes_in_java', 'email']
 
     def save(self, commit=True):
-        user = User.objects.create_user(
-            username=self.cleaned_data['username'],
-            email=self.cleaned_data['email'],
-            password=self.cleaned_data['new_password'],
-            role='tutor'
-        )
-        tutor = super().save(commit=False)
-        tutor.user = user
+        """Create a new tutor."""
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data.get('new_password'))
+
+        user.role = 'tutor'
+
         if commit:
-            tutor.save()
-        return tutor
+            user.save()
+            Tutor.objects.create(user=user)
+
+        return user
