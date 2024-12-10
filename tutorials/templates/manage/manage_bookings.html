@@ -1,7 +1,7 @@
 {% extends 'manage/manage_entities.html' %}
 
 {% block entity_type %}
-    {{entity_name}}s
+    bookings
 {% endblock %}
 
 
@@ -19,7 +19,7 @@
     {% for booking in bookings %}
     <tr>
         <th scope="col">{{booking.id}}</th>
-        <td>{{booking.student.username}}</td>
+        <td>{{booking.student.user.username}}</td>
         <td>{{booking.date}}</td>
         <td>{{booking.time}}</td>
         <td>{{booking.status}}</td>

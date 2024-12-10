@@ -1,8 +1,9 @@
 from django import forms
-from tutorials.models.lesson_models import Lesson
-from tutorials.models.booking_models import Booking
+from tutorials.models.lesson_model import Lesson
+from tutorials.models.booking_model import Booking
 from tutorials.models.user_models import User
 
+#TODO: Not implemented yet
 class UpdateLessonForm(forms.ModelForm):
     "Form to edit a lesson"
     class Meta:

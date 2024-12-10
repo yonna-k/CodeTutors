@@ -1,9 +1,20 @@
 {% extends 'manage/manage_users.html' %}
 
 {% block entity_type %}
-    Students
+    students
 {% endblock %} 
 
-{% block action_buttons %}
-    <a href="{% url 'get_student' user.id %}" class="btn btn-primary btn-sm" >View</a>
+{% block table_rows %}
+    {% for student in users %}
+    <tr>
+        <th scope="col">{{student.user.id}}</th>
+        <td>{{student.user.username}}</td>
+        <td>{{student.user.first_name}} {{student.user.last_name}}</td>
+        <td>{{student.user.email}}</td>
+        
+        <td class="text-end">
+            <a href="{% url 'get_student' student.user.id %}" class="btn btn-primary btn-sm">View</a>
+        </td> 
+    </tr>           
+    {% endfor %}
 {% endblock %}

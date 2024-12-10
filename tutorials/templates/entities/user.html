@@ -2,7 +2,6 @@
 
 {% block content %}
 <div class="container mt-5">
-
     <div class="card">
         <div class="card-body">
             <h2 class="mb-4">User #{{ user.id }}</p></h2>
@@ -19,11 +18,10 @@
             <div class="mb-3">
                 <p><strong>Email</strong>: {{ user.email }}</p>
             </div>
-            {% block extra_fields %}
-                <a href="{% url 'manage_users' %}" class="btn btn-primary">
-                    OK
-                </a>
-            {% endblock %}
+
+            <a href="{% url 'manage_users' %}" class="btn btn-primary">
+                OK
+            </a>
             <a href="{% url 'update_user' user.id %}" class="btn btn-warning">
                 Edit
             </a>

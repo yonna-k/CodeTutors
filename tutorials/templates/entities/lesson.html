@@ -5,13 +5,13 @@
 
     <div class="card">
         <div class="card-body">
-            <h2 class="mb-4">Lesson #{{ lesson.id }}</p></h2>
+            <h2 class="mb-4">Lesson #{{ lesson.booking.id }}</p></h2>
 
             <div class="mb-3">
-                <p><strong>Student</strong>: {{ lesson.booking.student.username }}</p>
+                <p><strong>Student</strong>: {{ lesson.booking.student.user.username }}</p>
             </div>
             <div class="mb-3">
-                <p><strong>Tutor</strong>: {{ lesson.tutor.username }}</p>
+                <p><strong>Tutor</strong>: {{ lesson.tutor.user.username }}</p>
             </div>
             <div class="mb-3">
                 <p><strong>Date</strong>: {{ lesson.booking.date }}</p>
@@ -44,10 +44,10 @@
             <a href="{% url 'manage_lessons' %}" class="btn btn-primary">
                 OK
             </a>
-            <a href="{% url 'update_lesson' lesson.id %}" class="btn btn-warning">
+            <a href="{% url 'update_lesson' lesson.booking.id %}" class="btn btn-warning">
                 Edit
             </a>            
-            <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
+            <a href="{% url 'delete_lesson' lesson.booking.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
                 Delete
             </a>
         </div>

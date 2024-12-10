@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, SignUpForm
+from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, StudentSignUpForm, TutorSignUpForm
 from tutorials.helpers import login_prohibited
 
 
@@ -16,8 +16,16 @@ from tutorials.helpers import login_prohibited
 def dashboard(request):
     """Display the current user's dashboard."""
 
-    current_user = request.user
-    return render(request, 'dashboard.html', {'user': current_user})
+    thisUser = request.user
+
+    if thisUser.role == 'student':
+        return render(request, 'student_dashboard.html', {'user': thisUser})
+    elif thisUser.role == 'tutor':
+        return render(request, 'tutor_dashboard.html', {'user': thisUser})
+    elif thisUser.role == 'admin':
+        return render(request, 'admin_dashboard.html', {'user': thisUser})
+    else:
+        return render(request, 'dashboard.html', {'user': thisUser})
 
 
 @login_prohibited
@@ -136,12 +144,27 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
+class TutorSignUpView(LoginProhibitedMixin, FormView):
+    """Handle tutor sign-ups."""
 
-class SignUpView(LoginProhibitedMixin, FormView):
-    """Display the sign up screen and handle sign ups."""
+    form_class = TutorSignUpForm
+    template_name = "tutor_sign_up.html"
+    redirect_when_logged_in_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
 
-    form_class = SignUpForm
-    template_name = "sign_up.html"
+    def form_valid(self, form):
+        """Save the tutor and set specialties."""
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+        
+class StudentSignUpView(LoginProhibitedMixin, FormView):
+    """Handle student sign-ups."""
+
+    form_class = StudentSignUpForm
+    template_name = "student_sign_up.html"
     redirect_when_logged_in_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
 
     def form_valid(self, form):
@@ -152,3 +175,18 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
     
+class TutorSignUpView(LoginProhibitedMixin, FormView):
+    """Handle tutor sign-ups."""
+
+    form_class = TutorSignUpForm
+    template_name = "tutor_sign_up.html"
+    redirect_when_logged_in_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
+
+    def form_valid(self, form):
+        """Save the tutor and set specialties."""
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
