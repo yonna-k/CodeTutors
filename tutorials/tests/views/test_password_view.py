@@ -47,19 +47,21 @@ class PasswordViewTest(TestCase):
         # Submit the password change form
         response = self.client.post(self.url, self.form_input, follow=True)
 
-        # Determine the expected dashboard template based on the user's role
+        # Determine the expected URL and template based on the user's role
         if self.user.role == 'student':
+            expected_url = reverse('student_dashboard')
             expected_template = 'student_dashboard.html'
         elif self.user.role == 'tutor':
+            expected_url = reverse('tutor_dashboard')
             expected_template = 'tutor_dashboard.html'
         elif self.user.role == 'admin':
+            expected_url = reverse('admin_dashboard')
             expected_template = 'admin_dashboard.html'
         else:
             self.fail(f"Unexpected role for user {self.user.username}: {self.user.role}")
 
         # Verify the redirection and template used
-        response_url = reverse('dashboard')
-        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, expected_template)
 
         # Refresh the user instance to verify the password change

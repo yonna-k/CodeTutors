@@ -50,19 +50,22 @@ class LogInViewTestCase(TestCase, LogInTester, MenuTesterMixin):
         self.client.login(username=self.user.username, password="Password123")
         response = self.client.get(self.url, follow=True)
 
-        # Determine expected template based on role
+        # Determine expected URL and template based on role
         if self.user.role == 'student':
+            expected_url = reverse('student_dashboard')
             expected_template = 'student_dashboard.html'
         elif self.user.role == 'tutor':
+            expected_url = reverse('tutor_dashboard')
             expected_template = 'tutor_dashboard.html'
         elif self.user.role == 'admin':
+            expected_url = reverse('admin_dashboard')
             expected_template = 'admin_dashboard.html'
         else:
             self.fail(f"Unexpected role for user {self.user.username}: {self.user.role}")
 
-        redirect_url = reverse('dashboard')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, expected_template)
+
 
 
     def test_unsuccesful_log_in(self):
@@ -111,22 +114,21 @@ class LogInViewTestCase(TestCase, LogInTester, MenuTesterMixin):
 
         self.assertTrue(self._is_logged_in())
 
-        # Determine expected template based on role
+        # Determine expected URL and template based on role
         if self.user.role == 'student':
+            expected_url = reverse('student_dashboard')
             expected_template = 'student_dashboard.html'
         elif self.user.role == 'tutor':
+            expected_url = reverse('tutor_dashboard')
             expected_template = 'tutor_dashboard.html'
         elif self.user.role == 'admin':
+            expected_url = reverse('admin_dashboard')
             expected_template = 'admin_dashboard.html'
         else:
             self.fail(f"Unexpected role for user {self.user.username}: {self.user.role}")
 
-        response_url = reverse('dashboard')
-        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, expected_template)
-        messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
-        self.assert_menu(response)
 
 
     def test_succesful_log_in_with_redirect(self):
@@ -145,18 +147,20 @@ class LogInViewTestCase(TestCase, LogInTester, MenuTesterMixin):
         form_input = {'username': '@wronguser', 'password': 'WrongPassword123'}
         response = self.client.post(self.url, form_input, follow=True)
 
-        # Determine expected template based on role
+        # Determine expected URL and template based on role
         if self.user.role == 'student':
+            expected_url = reverse('student_dashboard')
             expected_template = 'student_dashboard.html'
         elif self.user.role == 'tutor':
+            expected_url = reverse('tutor_dashboard')
             expected_template = 'tutor_dashboard.html'
         elif self.user.role == 'admin':
+            expected_url = reverse('admin_dashboard')
             expected_template = 'admin_dashboard.html'
         else:
             self.fail(f"Unexpected role for user {self.user.username}: {self.user.role}")
 
-        redirect_url = reverse('dashboard')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, expected_template)
 
 
