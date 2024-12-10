@@ -6,7 +6,8 @@ class Admin(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='admin_profile'
+        related_name='admin_profile',
+        primary_key=True
     )
     # Add any admin-specific fields here
 
