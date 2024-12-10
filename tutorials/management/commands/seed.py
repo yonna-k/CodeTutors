@@ -124,9 +124,9 @@ class Command(BaseCommand):
         specialties = {
             'specializes_in_python': random() > 0.5,
             'specializes_in_java': random() > 0.5,
-            'specializes_in_c': random() > 0.5,
+            'specializes_in_C': random() > 0.5,
             'specializes_in_ruby': random() > 0.5,
-            'specializes_in_sql': random() > 0.5,
+            'specializes_in_SQL': random() > 0.5,
         }
         availability = {
             'available_monday': random() > 0.5,
@@ -225,10 +225,13 @@ class Command(BaseCommand):
             if i >= self.LESSON_COUNT:
                 break
             
-            #TODO: Fix problem of "..._SQL" becoming "_sql"
+            #TODO: AWFUL code, fix once everything merged to main
+            lang_field = f"specializes_in_{booking.lang if booking.lang in ['SQL', 'C'] else booking.lang.lower()}"
+            day_field = f"available_{booking.day.lower()}"
+
             matching_tutors = Tutor.objects.filter(
-                **{f"specializes_in_{booking.lang.lower()}": True},  # Match language specialty
-                **{f"available_{booking.day.lower()}": True}         # Match day availability
+                **{lang_field: True},  # Match language specialty
+                **{day_field: True}   # Match day availability
             )
             if not matching_tutors.exists():
                 print(f"No tutors available for Booking #{booking.id} ({booking.lang} on {booking.day}).")
