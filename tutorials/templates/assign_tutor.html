@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-sm-12 col-md-6 offset-md-3">
             <h1>Assign Tutor or Update Booking</h1>
-            <p><strong>Student:</strong> {{ booking.student }} ({{ booking.student.first_name }} {{ booking.student.last_name }})</p>
+            <p><strong>Student:</strong> {{ booking.student.user.username }} ({{ booking.student.user.first_name }} {{ booking.student.user.last_name }})</p>
             <p>Instructions: Save the details first, then assign a Tutor to the Student's Booking Request. If there are no Tutors available, you will have to change the time and/or date. The system will check whether the tutor has an overlap in Lessons and inform you after assigning.</p>
             {% if no_tutors %}
                 <div class="alert alert-warning">No tutors are available for this booking. Please update the booking details to match tutor availability.</div>
@@ -101,7 +101,7 @@
                                 <label for="{{ assign_form.tutor.id_for_label }}">Select Tutor:</label>
                                 <select name="tutor" id="{{ assign_form.tutor.id_for_label }}" class="form-control">
                                     {% for tutor in assign_form.tutor.field.queryset %}
-                                        <option value="{{ tutor.pk }}">{{ tutor.first_name }} {{ tutor.last_name }}</option>
+                                        <option value="{{ tutor.pk }}">{{ tutor.user.first_name }} {{ tutor.user.last_name }}</option>
                                     {% endfor %}
                                 </select>
                                 {% for error in assign_form.tutor.errors %}

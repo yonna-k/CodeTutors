@@ -56,7 +56,7 @@ def assign_tutor(request, booking_id):
                     #current booking is not connected to lesson, so can be deleted safely
                     booking.delete()
                     messages.success(request, "Tutor assigned successfully and further lessons booked!")
-                    return redirect("dashboard")
+                    return redirect('dashboard')
 
     else:
         assign_form = AssignTutorForm(tutors=tutors)
