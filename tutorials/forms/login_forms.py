@@ -124,7 +124,7 @@ class StudentSignUpForm(NewPasswordMixin, forms.ModelForm):
         user.save()
 
 
-        Student.objects.create(user=user)
+        Student.objects.create(user=user, level=level)
 
         return user
 
@@ -132,9 +132,11 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling unregistered users to sign up."""
 
     LANGUAGES = ['Python', 'Java', 'C', 'Ruby', 'SQL']
-
+    LANG_MAP = {
+        "C" : "C", "SQL" : "SQL"
+    }
     for lang in LANGUAGES:
-        field_name = f'specializes_in_{lang}'
+        field_name = f'specializes_in_{LANG_MAP.get(lang, lang.lower())}'
         vars()[field_name] = forms.ChoiceField(
             choices=[('Yes', 'Yes'), ('No', 'No')],
             initial='No',
@@ -145,7 +147,7 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
     # same for availability (like we did for languages)
     Days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     for day in Days:
-        field_name = f'available_{day}'
+        field_name = f'available_{day.lower()}'
         vars()[field_name] = forms.ChoiceField(
             choices=[('Yes', 'Yes'), ('No', 'No')],
             initial='No',
@@ -156,8 +158,8 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
     class Meta:
         """Form options."""
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'specializes_in_Python', 'specializes_in_Java', 'specializes_in_C', 'specializes_in_Ruby', 'specializes_in_SQL',
-                  'available_Monday', 'available_Tuesday', 'available_Wednesday', 'available_Thursday', 'available_Friday', 'available_Saturday', 'available_Sunday']
+        fields = ['first_name', 'last_name', 'username', 'email', 'specializes_in_python', 'specializes_in_java', 'specializes_in_C', 'specializes_in_ruby', 'specializes_in_SQL',
+                  'available_monday', 'available_tuesday', 'available_wednesday', 'available_thursday', 'available_friday', 'available_saturday', 'available_sunday']
 
     def save(self, commit=True):
         """Create a new user."""
@@ -169,24 +171,42 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
         if commit:
             user.save()
 
+        MAP = {
+            "Yes" : True, "No" : False
+        }
+
         # Set the role after the user is created
         role = self.cleaned_data.get('role')
-        specializes_in_Python = self.cleaned_data.get('specializes_in_Python')
-        specializes_in_Java = self.cleaned_data.get('specializes_in_Java')
-        specializes_in_C = self.cleaned_data.get('specializes_in_C')
-        specializes_in_Ruby = self.cleaned_data.get('specializes_in_Ruby')
-        specializes_in_SQL = self.cleaned_data.get('specializes_in_SQL')
-        available_Monday = self.cleaned_data.get('available_Monday')
-        available_Tuesday = self.cleaned_data.get('available_Tuesday')
-        available_Wednesday = self.cleaned_data.get('available_Wednesday')
-        available_Thursday = self.cleaned_data.get('available_Thursday')
-        available_Friday = self.cleaned_data.get('available_Friday')
-        available_Saturday = self.cleaned_data.get('available_Saturday')
-        available_Sunday = self.cleaned_data.get('available_Sunday')
+        specializes_in_Python = MAP.get(self.cleaned_data.get('specializes_in_python'))
+        specializes_in_Java = MAP.get(self.cleaned_data.get('specializes_in_java'))
+        specializes_in_C = MAP.get(self.cleaned_data.get('specializes_in_C'))
+        specializes_in_Ruby = MAP.get(self.cleaned_data.get('specializes_in_ruby'))
+        specializes_in_SQL = MAP.get(self.cleaned_data.get('specializes_in_SQL'))
+        available_Monday = MAP.get(self.cleaned_data.get('available_monday'))
+        available_Tuesday = MAP.get(self.cleaned_data.get('available_tuesday'))
+        available_Wednesday = MAP.get(self.cleaned_data.get('available_wednesday'))
+        available_Thursday = MAP.get(self.cleaned_data.get('available_thursday'))
+        available_Friday = MAP.get(self.cleaned_data.get('available_friday'))
+        available_Saturday = MAP.get(self.cleaned_data.get('available_saturday'))
+        available_Sunday = MAP.get(self.cleaned_data.get('available_sunday'))
         user.role = 'tutor'
         user.save()
 
-        Tutor.objects.create(user=user)
+        Tutor.objects.create(
+            user=user, 
+            specializes_in_python=specializes_in_Python, 
+            specializes_in_java=specializes_in_Java, 
+            specializes_in_C=specializes_in_C,
+            specializes_in_ruby=specializes_in_Ruby,
+            specializes_in_SQL=specializes_in_SQL,
+            available_monday=available_Monday,
+            available_tuesday=available_Tuesday,
+            available_wednesday=available_Wednesday,
+            available_thursday=available_Thursday,
+            available_friday=available_Friday,
+            available_saturday=available_Saturday,
+            available_sunday=available_Sunday
+        )
 
 
         return user
