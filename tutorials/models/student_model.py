@@ -7,7 +7,8 @@ class Student(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='student_profile'
+        related_name='student_profile',
+        primary_key=True
     )
 
     LEVEL_CHOICES = [

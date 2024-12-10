@@ -6,7 +6,8 @@ class Lesson(models.Model):
     booking = models.OneToOneField(
         Booking,
         on_delete=models.CASCADE,
-        related_name="lesson"
+        related_name="lesson",
+        primary_key=True
     )
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 
