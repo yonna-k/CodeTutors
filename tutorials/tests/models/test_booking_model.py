@@ -154,12 +154,12 @@ class BookingModelTestCase(TestCase):
         self.assertEqual(bookings.count(), 1)
 
     def test_invalid_student_foreign_key(self):
-        invalid_student = Student.objects.filter(id=999).first()
+        invalid_student = Student.objects.filter(user_id=999).first()
         self.booking.student = invalid_student
         self._assert_booking_is_invalid()
 
     def test_default_foreign_key_value(self):
-        default_student = Student.objects.filter(id=1).first()
+        default_student = Student.objects.filter(user_id=1).first()
         self.booking = Booking.objects.create(
             date="2024-12-01",  #YYYY-MM-DD format
             time="14:30:00",    #HH:MM:SS format
