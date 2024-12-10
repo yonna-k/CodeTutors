@@ -112,7 +112,7 @@ class AssignTutorViewTest(TestCase):
         #test that 'assign_tutor' creates lessons and deletes the booking
         response = self.client.post(self.url, {
             "assign_tutor": "",
-            "tutor": self.tutor_1.id,
+            "tutor": self.tutor_1.user_id,
         })
 
         self.assertFalse(Booking.objects.filter(id=self.booking.id).exists())  # Booking is deleted
@@ -131,7 +131,7 @@ class AssignTutorViewTest(TestCase):
         )
         response = self.client.post(self.url, {
             "assign_tutor": "",
-            "tutor": self.tutor_1.id,
+            "tutor": self.tutor_1.user_id,
         })
 
         self.assertTrue(Booking.objects.filter(id=self.booking.id).exists())  #booking is not deleted

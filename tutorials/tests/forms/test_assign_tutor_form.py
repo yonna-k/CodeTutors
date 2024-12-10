@@ -63,7 +63,7 @@ class AssignTutorFormTest(TestCase):
 
     def test_form_is_valid_with_valid_tutor(self):
         #test that the form is valid when a valid tutor is selected
-        form = AssignTutorForm(data={'tutor': self.tutor_1.id}, tutors=Tutor.objects.all())
+        form = AssignTutorForm(data={'tutor': self.tutor_1.user_id}, tutors=Tutor.objects.all())
         self.assertTrue(form.is_valid())
 
     def test_form_is_invalid_without_tutor(self):
