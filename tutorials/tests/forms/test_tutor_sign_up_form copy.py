@@ -16,7 +16,8 @@ class TutorSignUpFormTestCase(TestCase):
             'new_password': 'Password123',
             'password_confirmation': 'Password123',
             'specializes_in_python': 'Yes',
-            'specializes_in_java': 'No'
+            'specializes_in_java': 'No',
+            'rate' : '19.00'
         }
 
     def test_valid_tutor_sign_up_form(self):
@@ -33,6 +34,7 @@ class TutorSignUpFormTestCase(TestCase):
         self.assertIn('specializes_in_java', form.fields)
         self.assertIn('new_password', form.fields)
         self.assertIn('password_confirmation', form.fields)
+        self.assertIn('rate', form.fields)
 
     def test_specialization_fields_are_dropdowns(self):
         form = TutorSignUpForm()

@@ -75,13 +75,12 @@ urlpatterns = [
 
     path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
 
-    path('dashboard/admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor")
+    path('dashboard/admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor"),
 
-=======
+
     path('sign_up/', include([
         path('student/', login_views.StudentSignUpView.as_view(), name='student_sign_up'),
         path('tutor/', login_views.TutorSignUpView.as_view(), name='tutor_sign_up'),
     ]))
->>>>>>> d180e004bb72890fc15e755d513db3254ae770bd
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
