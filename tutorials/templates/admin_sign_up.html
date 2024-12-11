@@ -1,0 +1,17 @@
+{% extends 'base_content.html' %}
+{% block content %}
+  <div class="container-fluid d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(to right, #2c3e50, #3498db);">
+    <div class="text-center text-white p-5 rounded shadow-lg" style="max-width: 600px; background-color: rgba(0, 0, 0, 0.6);">
+      <h1 class="display-4 font-weight-bold mb-4">Admin Sign Up</h1>
+
+      <form action="{% url 'admin_sign_up' %}" method="post">
+        {% csrf_token %}
+        {% include 'partials/bootstrap_form.html' with form=form %}
+
+        <div class="mt-4">
+          <input type="submit" value="Add Admin" class="btn btn-primary btn-lg btn-block rounded-pill">
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 from tutorials.models.user_models import User
 from tutorials.models.tutor_model import Tutor
 from tutorials.models.student_model import Student
+from tutorials.models.admin_model import Admin
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -227,5 +228,37 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
             rate=rate
         )
 
+
+        return user
+
+class AdminSignUpForm(NewPasswordMixin, forms.ModelForm):
+    """Form enabling unregistered users to sign up as admin."""
+    
+    
+    class Meta:
+        """Form options."""
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email']
+
+    def save(self, commit=True):
+        """Create a new admin user."""
+        # Create the user object first
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data.get('new_password'))  # Set the password securely
+
+        # Set the user as admin
+        user.is_staff = True
+        user.is_superuser = True
+
+        # Save the user object
+        if commit:
+            user.save()
+
+        # Set the role after the user is created
+        user.role = 'admin'
+        user.save()
+
+        # Create an associated Admin object (if you have an Admin model)
+        Admin.objects.create(user=user)
 
         return user
