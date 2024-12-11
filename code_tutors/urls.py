@@ -24,12 +24,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_views.home, name='home'),
 
-
-    path('dashboard/', include([
-        path('', login_views.dashboard, name='dashboard'),
-        path('admin/', login_views.admin_dashboard, name='admin_dashboard'),
-        path('student/', login_views.student_dashboard, name='student_dashboard'),
-        path('tutor/', login_views.tutor_dashboard, name='tutor_dashboard'),
+    path('sign_up/', include([
+        path('student/', login_views.StudentSignUpView.as_view(), name='student_sign_up'),
+        path('tutor/', login_views.TutorSignUpView.as_view(), name='tutor_sign_up'),
+        path('admin/', login_views.AdminSignUpView.as_view(), name='admin_sign_up'),
     ])),
 
     path('log_in/', login_views.LogInView.as_view(), name='log_in'),
@@ -37,17 +35,16 @@ urlpatterns = [
     path('password/', login_views.PasswordView.as_view(), name='password'),
     path('profile/', login_views.ProfileUpdateView.as_view(), name='profile'),
 
-
-    path('dashboard/student/', login_views.student_dashboard, name='student_dashboard'),
-    path('dashboard/tutor/', login_views.tutor_dashboard, name='tutor_dashboard'),
-    path('create-booking/', booking_views.create_booking, name='create_booking'),
-    
-
-    path('sign_up/', include([
-        path('student/', login_views.StudentSignUpView.as_view(), name='student_sign_up'),
-        path('tutor/', login_views.TutorSignUpView.as_view(), name='tutor_sign_up'),
-        path('admin/', login_views.AdminSignUpView.as_view(), name='admin_sign_up')
+    path('dashboard/', include([
+        path('', login_views.dashboard, name='dashboard'),
+        path('admin/', login_views.admin_dashboard, name='admin_dashboard'),
+        path('admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor"),
+        path('student/', login_views.student_dashboard, name='student_dashboard'),
+        path('student/book_session', booking_views.create_booking, name='create_booking'),
+        path('tutor/', login_views.tutor_dashboard, name='tutor_dashboard'),
     ])),
+
+    path('create_booking/', booking_views.create_booking, name='create_booking'),
 
     path('manage/', include([   
         path('user/', admin_views.manage_users, name='manage_users'),
@@ -69,18 +66,9 @@ urlpatterns = [
     path('delete_booking/<int:id>/', admin_views.delete_booking, name='delete_booking'),
     path('delete_lesson/<int:id>/', admin_views.delete_lesson, name='delete_lesson'),
 
+    #TODO: Potentially add functionality to edit entities
     path('update_user/<int:id>/', admin_views.update_user, name='update_user'),
     path('update_lesson/<int:id>/', admin_views.update_lesson, name='update_lesson'),
     path('update_booking/<int:id>/', admin_views.update_booking, name='update_booking'),
-
-    path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
-
-    path('dashboard/admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor"),
-
-
-    path('sign_up/', include([
-        path('student/', login_views.StudentSignUpView.as_view(), name='student_sign_up'),
-        path('tutor/', login_views.TutorSignUpView.as_view(), name='tutor_sign_up'),
-    ]))
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

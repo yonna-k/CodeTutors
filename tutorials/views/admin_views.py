@@ -41,7 +41,6 @@ def add_admin(request):
         form = AdminSignUpForm(request.POST)
         if form.is_valid():
             form.save()  # Save the new admin user
-            messages.success(request, "Admin user created successfully!")
             return redirect("dashboard")
     else:
         form = AdminSignUpForm()
@@ -114,7 +113,7 @@ def delete_tutors(request, id):
         tutor.delete()
     except Tutor.DoesNotExist:
         raise Http404(f"Could not find tutor with ID {id}")
-    return redirect('manage_students')
+    return redirect('manage_tutors')
 
 def delete_booking(request, id):
     "Delete the specified booking"
