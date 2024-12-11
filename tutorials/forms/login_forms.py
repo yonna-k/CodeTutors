@@ -155,11 +155,28 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
             label=day
         )
 
+    # vars()['rate'] = forms.DecimalField(
+    #     max_digits=5,
+    #     decimal_places=2,
+    #     initial=0.00,
+    #     min_value=0,
+    #     help_text="Enter your preferred hourly rate.",
+    #     label="Hourly Rate"
+    # )
+
+    rate = forms.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        max_value=999.99,
+        min_value=0
+    )
+
+
     class Meta:
         """Form options."""
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'specializes_in_python', 'specializes_in_java', 'specializes_in_C', 'specializes_in_ruby', 'specializes_in_SQL',
-                  'available_monday', 'available_tuesday', 'available_wednesday', 'available_thursday', 'available_friday', 'available_saturday', 'available_sunday']
+                  'available_monday', 'available_tuesday', 'available_wednesday', 'available_thursday', 'available_friday', 'available_saturday', 'available_sunday', 'rate']
 
     def save(self, commit=True):
         """Create a new user."""
@@ -189,6 +206,7 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
         available_Friday = MAP.get(self.cleaned_data.get('available_friday'))
         available_Saturday = MAP.get(self.cleaned_data.get('available_saturday'))
         available_Sunday = MAP.get(self.cleaned_data.get('available_sunday'))
+        rate = self.cleaned_data.get('rate') 
         user.role = 'tutor'
         user.save()
 
@@ -205,7 +223,8 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
             available_thursday=available_Thursday,
             available_friday=available_Friday,
             available_saturday=available_Saturday,
-            available_sunday=available_Sunday
+            available_sunday=available_Sunday,
+            rate=rate
         )
 
 
