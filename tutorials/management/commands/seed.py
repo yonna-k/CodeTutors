@@ -61,10 +61,10 @@ lesson_fixtures = [
 
 class Command(BaseCommand):
     USER_COUNT = 200
-    TUTOR_COUNT = 20
+    TUTOR_COUNT = 15
     STUDENT_COUNT = 100
-    BOOKING_COUNT = 50
-    LESSON_COUNT = 30
+    BOOKING_COUNT = 100
+    LESSON_COUNT = 75
     DEFAULT_PASSWORD = 'Password123'
     help = 'Seeds the database with sample data'
 
@@ -194,7 +194,7 @@ class Command(BaseCommand):
         for _ in range(self.BOOKING_COUNT):
             student = Student.objects.all()[randint(0, student_count - 1)]
 
-            booking_date = datetime.now().date() + timedelta(days=randint(1, 30))  # Next 30 days
+            booking_date = datetime.now().date() + timedelta(days=randint(-30, 30))  # next/previous 30 days
             booking_time = time(randint(9, 17), choice([0, 30]))  # Random time between 9:00 to 17:00
 
             frequency = choice(['weekly', 'fortnightly'])
