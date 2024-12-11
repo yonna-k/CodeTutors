@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_views.home, name='home'),
 
+
     path('dashboard/', include([
         path('', login_views.dashboard, name='dashboard'),
         path('admin/', login_views.admin_dashboard, name='admin_dashboard'),
@@ -35,6 +36,7 @@ urlpatterns = [
     path('log_out/', login_views.log_out, name='log_out'),
     path('password/', login_views.PasswordView.as_view(), name='password'),
     path('profile/', login_views.ProfileUpdateView.as_view(), name='profile'),
+
 
     path('dashboard/student/', login_views.student_dashboard, name='student_dashboard'),
     path('dashboard/tutor/', login_views.tutor_dashboard, name='tutor_dashboard'),
@@ -75,5 +77,11 @@ urlpatterns = [
 
     path('dashboard/admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor")
 
+=======
+    path('sign_up/', include([
+        path('student/', login_views.StudentSignUpView.as_view(), name='student_sign_up'),
+        path('tutor/', login_views.TutorSignUpView.as_view(), name='tutor_sign_up'),
+    ]))
+>>>>>>> d180e004bb72890fc15e755d513db3254ae770bd
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

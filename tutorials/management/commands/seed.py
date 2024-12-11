@@ -1,3 +1,4 @@
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from tutorials.models import Admin, User, Tutor, Student, Booking, Lesson
