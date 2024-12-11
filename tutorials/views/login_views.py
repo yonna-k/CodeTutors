@@ -29,7 +29,6 @@ def dashboard(request):
         return redirect('dashboard')
 
 # TODO: add @login_required
-# TODO: Update seed.py to seed times in the past
 # TODO: may also need to implement filtering out past lessons elsewhere
 
 #@login_required
@@ -95,14 +94,13 @@ def tutor_dashboard(request):
     }
     return render(request, 'tutor_dashboard.html', context)
 
-#@login_required
-#TODO
+#TODO @login_required
 def admin_dashboard(request):
     return render(request, 'admin_dashboard.html', {'user': request.user})
 
 def create_booking(request):
     if request.method == "POST":
-        # Handle booking form submission
+        #TODO Handle booking form submission
         pass
     return render(request, 'create_booking.html')
 

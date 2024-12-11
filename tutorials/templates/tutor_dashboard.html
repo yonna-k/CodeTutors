@@ -19,7 +19,6 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- TODO -->
                 {% for lesson in upcoming_lessons %}
                 <tr>
                     <th scope="col">{{lesson.booking.id}}</th>
@@ -58,6 +57,7 @@
             </thead>
             <tbody>
                 {% for lesson in previous_lessons %}
+                <tr>
                     <th scope="col">{{lesson.booking.id}}</th>
                     <td>{{ lesson.booking.date }}</td>
                     <td>{{ lesson.booking.time }}</td>
@@ -66,10 +66,11 @@
                     <td>{{ lesson.booking.lang }}</td>
                     <td>{{ lesson.booking.student.level }}</td>
                     <td>{{ lesson.booking.venue }}</td>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6">No lessons found.</td>
-                    </tr>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No lessons found.</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
