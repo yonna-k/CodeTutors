@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from tutorials.models import User, Student, Tutor, Booking, Lesson
 from tutorials.forms.login_forms import AdminSignUpForm
 from django.http import Http404
+from django.http import HttpResponse
 from itertools import chain
+
 
 #TODO: use class based views?
 #TODO: use @login_required once Admin class made
@@ -133,14 +135,3 @@ def delete_lesson(request, id):
         raise Http404(f"Could not find lesson with ID {id}")
     return redirect('manage_lessons')
 
-
-
-#TODO:
-def update_user(request, id):
-    pass
-
-def update_booking(request, id):
-    pass
-
-def update_lesson(request, id):
-    pass
