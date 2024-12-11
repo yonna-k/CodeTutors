@@ -1,4 +1,5 @@
-from django.core.management.base import BaseCommand
+
+from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from tutorials.models import Admin, User, Tutor, Student, Booking, Lesson
 import pytz
@@ -68,6 +69,7 @@ class Command(BaseCommand):
     help = 'Seeds the database with sample data'
 
     def __init__(self):
+        super().__init__()
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
