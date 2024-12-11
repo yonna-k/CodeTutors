@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, StudentSignUpForm, TutorSignUpForm
+from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, StudentSignUpForm, TutorSignUpForm, AdminSignUpForm
 from tutorials.helpers import login_prohibited
 
 
@@ -219,3 +219,20 @@ class TutorSignUpView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+
+class AdminSignUpView(FormView):
+    """Handle admin sign-ups."""
+    
+    form_class = AdminSignUpForm
+    template_name = 'admin_sign_up.html'  # Template to render the admin sign-up form
+    redirect_when_logged_in_url = settings.REDIRECT_URL_WHEN_LOGGED_IN  # Redirect URL if the user is logged in
+    
+    def form_valid(self, form):
+        """Save the admin and log them in."""
+        self.object = form.save()
+        login(self.request, self.object)  # Automatically log the user in after creation
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        """Redirect to the configured URL after successful admin sign-up."""
+        return reverse(self.redirect_when_logged_in_url)

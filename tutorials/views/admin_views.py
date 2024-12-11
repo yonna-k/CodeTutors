@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 
 from tutorials.models import User, Student, Tutor, Booking, Lesson
+from tutorials.forms.login_forms import AdminSignUpForm
 from django.http import Http404
 from itertools import chain
 
@@ -33,6 +34,19 @@ def manage_lessons(request):
     "Renders the manage entities template with lesson data"
     lessons = Lesson.objects.all().order_by('booking_id')
     return render(request, "manage/manage_lessons.html", {'lessons': lessons})
+
+def add_admin(request):
+    """Allow superusers to add new admin users."""
+    if request.method == "POST":
+        form = AdminSignUpForm(request.POST)
+        if form.is_valid():
+            form.save()  # Save the new admin user
+            messages.success(request, "Admin user created successfully!")
+            return redirect("dashboard")
+    else:
+        form = AdminSignUpForm()
+
+    return render(request, "add_admin.html", {"form": form})
 
 def get_user(request, id):
     "Renders the specific user template"
@@ -119,6 +133,8 @@ def delete_lesson(request, id):
     except Lesson.DoesNotExist:
         raise Http404(f"Could not find lesson with ID {id}")
     return redirect('manage_lessons')
+
+
 
 #TODO:
 def update_user(request, id):

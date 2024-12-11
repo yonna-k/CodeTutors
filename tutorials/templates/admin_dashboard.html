@@ -6,8 +6,21 @@
 
       <p class="lead mb-4">Manage your users and tutors!</p>
 
+      <form method="POST" action="{% url 'admin_sign_up' %}">
+        {% csrf_token %}
+        <!-- You can include any form fields here for the admin creation -->
+        <button type="submit" class="btn btn-primary btn-lg btn-block rounded-pill">Add Admin</button>
+      </form>
 
-
+      <!-- Management Buttons -->
+      <div class="mt-5">
+        <a href="{% url 'manage_bookings' %}" class="btn btn-secondary btn-lg btn-block rounded-pill mb-3">Manage Bookings</a>
+        <a href="{% url 'manage_lessons' %}" class="btn btn-secondary btn-lg btn-block rounded-pill mb-3">Manage Lessons</a>
+        <a href="{% url 'manage_students' %}" class="btn btn-secondary btn-lg btn-block rounded-pill mb-3">Manage Students</a>
+        <a href="{% url 'manage_tutors' %}" class="btn btn-secondary btn-lg btn-block rounded-pill mb-3">Manage Tutors</a>
+        <a href="{% url 'manage_users' %}" class="btn btn-secondary btn-lg btn-block rounded-pill mb-3">Manage Users</a>
+      </div>
     </div>
   </div>
 {% endblock %}
+

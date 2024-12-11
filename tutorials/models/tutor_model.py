@@ -1,13 +1,9 @@
 from django.db import models
-<<<<<<< HEAD
-from django.core.validators import MinValueValidator, MaxValueValidator
-from . import User
-=======
 from django.conf import settings
 from .user_models import User
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
->>>>>>> main
+
 
 class Tutor(models.Model):
 
