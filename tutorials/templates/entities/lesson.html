@@ -1,0 +1,56 @@
+{% extends 'base_content.html' %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="mb-4">Lesson #{{ lesson.booking.id }}</p></h2>
+
+            <div class="mb-3">
+                <p><strong>Student</strong>: {{ lesson.booking.student.user.username }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Tutor</strong>: {{ lesson.tutor.user.username }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Date</strong>: {{ lesson.booking.date }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Time</strong>: {{ lesson.booking.time }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Venue</strong>: {{ lesson.booking.venue }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Frequency</strong>: {{ lesson.booking.frequency }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Duration</strong>: {{ lesson.booking.duration }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Day</strong>: {{ lesson.booking.day }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Language</strong>: {{ lesson.booking.lang }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Invoice</strong>: {{ lesson.invoice }}</p>
+            </div>
+            <div class="mb-3">
+                <p><strong>Status</strong>: {{ lesson.booking.status }}</p>
+            </div>
+
+            <a href="{% url 'manage_lessons' %}" class="btn btn-primary">
+                OK
+            </a>
+            <a href="{% url 'update_lesson' lesson.booking.id %}" class="btn btn-warning">
+                Edit
+            </a>            
+            <a href="{% url 'delete_lesson' lesson.booking.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
+                Delete
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

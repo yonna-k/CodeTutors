@@ -1,33 +1,41 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from tutorials.models.student_models import Student
+from tutorials.models.student_model import Student
+from tutorials.models.user_models import User
 from django.contrib.auth.hashers import make_password
 
 class StudentModelTestCase(TestCase):
     """Unit tests for the Student model."""
 
     def setUp(self):
-        self.student = Student.objects.create(
+
+        # Create a User instance
+        user = User.objects.create_user(
             username='@teststudent',
             password=make_password('Password123'), #dodgy, should use seeder data instead
             first_name='Test',
             last_name='Student',
             email='teststudent@example.com',
-            level='BEGINNER'
         )
+
+        # Create the associated Student instance
+        self.student = Student.objects.create(user=user, level='BEGINNER')
+
 
     def test_valid_student(self):
         self._assert_student_is_valid()
 
     def test_default_level_is_beginner(self):
-        new_student = Student.objects.create(
+        new_student = User.objects.create(
             username='@newstudent',
-            password=make_password('Password123'), 
+            password=make_password('Password123'),
             first_name='New',
             last_name='Student',
             email='newstudent@example.com'
         )
-        self.assertEqual(new_student.level, 'BEGINNER')
+
+        self.nstudent = Student.objects.create(user=new_student)
+        self.assertEqual(self.nstudent.level, 'BEGINNER')
 
     def test_level_can_be_beginner(self):
         self.student.level = 'BEGINNER'

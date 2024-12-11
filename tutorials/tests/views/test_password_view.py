@@ -40,14 +40,35 @@ class PasswordViewTest(TestCase):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_succesful_password_change(self):
+        """Test successful password change redirects to the appropriate dashboard."""
+        # Log in the user
         self.client.login(username=self.user.username, password='Password123')
+
+        # Submit the password change form
         response = self.client.post(self.url, self.form_input, follow=True)
-        response_url = reverse('dashboard')
-        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+
+        # Determine the expected URL and template based on the user's role
+        if self.user.role == 'student':
+            expected_url = reverse('student_dashboard')
+            expected_template = 'student_dashboard.html'
+        elif self.user.role == 'tutor':
+            expected_url = reverse('tutor_dashboard')
+            expected_template = 'tutor_dashboard.html'
+        elif self.user.role == 'admin':
+            expected_url = reverse('admin_dashboard')
+            expected_template = 'admin_dashboard.html'
+        else:
+            self.fail(f"Unexpected role for user {self.user.username}: {self.user.role}")
+
+        # Verify the redirection and template used
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, expected_template)
+
+        # Refresh the user instance to verify the password change
         self.user.refresh_from_db()
         is_password_correct = check_password('NewPassword123', self.user.password)
         self.assertTrue(is_password_correct)
+
 
     def test_password_change_unsuccesful_without_correct_old_password(self):
         self.client.login(username=self.user.username, password='Password123')
