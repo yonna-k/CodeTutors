@@ -27,7 +27,7 @@ def manage_tutors(request):
 
 def manage_bookings(request):
     "Renders the manage entities template with booking data"
-    bookings = Booking.objects.all().order_by('id')
+    bookings = Booking.objects.filter(status="OPEN").order_by('id')
     return render(request, "manage/manage_bookings.html", {'bookings': bookings})
 
 def manage_lessons(request):
