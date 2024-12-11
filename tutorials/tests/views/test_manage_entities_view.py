@@ -1,6 +1,7 @@
 from django.test import TestCase
 from tutorials.models import User, Student, Tutor, Booking, Lesson
 from datetime import date, time
+from django.urls import reverse
 
 #TODO: Add more tests
 
@@ -56,7 +57,7 @@ class ManageEntitiesTestCase(TestCase):
         Lesson.objects.all().delete()
 
     def test_manage_users(self):
-        response = self.client.get('/manage/users/')
+        response = self.client.get(reverse('manage_users'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'manage/manage_users.html')
         self.assertContains(response, self.user.username)
