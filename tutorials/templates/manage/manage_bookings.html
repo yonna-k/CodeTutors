@@ -1,0 +1,32 @@
+{% extends 'manage/manage_entities.html' %}
+
+{% block entity_type %}
+    bookings
+{% endblock %}
+
+
+{% block table_headers %}
+    <th scope="col">#</th>
+    <th scope="col">Student</th>
+    <th scope="col">Requested Date</th>
+    <th scope="col">Requested Time</th>
+    <th scope="col">Status</th>
+    <th scope="col" class="text-end">Actions</th>
+{% endblock %}
+
+
+{% block table_rows %}
+    {% for booking in bookings %}
+    <tr>
+        <th scope="col">{{booking.id}}</th>
+        <td>{{booking.student.user.username}}</td>
+        <td>{{booking.date}}</td>
+        <td>{{booking.time}}</td>
+        <td>{{booking.status}}</td>
+        <!--TODO: add urls with a-href for buttons to function later-->
+        <td class="text-end">
+            <a href="{% url 'get_booking' booking.id %}" class="btn btn-primary btn-sm" >View</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}

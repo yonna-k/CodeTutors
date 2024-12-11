@@ -1,0 +1,30 @@
+{% extends 'manage/manage_entities.html' %}
+
+{% block entity_type %}
+    lessons
+{% endblock %}
+
+{% block table_headers %}
+    <th scope="col">#</th>
+    <th scope="col">Student</th>
+    <th scope="col">Tutor</th>
+    <th scope="col">Date</th>
+    <th scope="col">Time</th>
+    <th scope="col" class="text-end">Actions</th>
+{% endblock %}
+
+{% block table_rows %}
+    {% for lesson in lessons %}
+    <tr>
+        <th scope="col">{{lesson.booking.id}}</th>
+        <td>{{lesson.booking.student.user.username}}</td>
+        <td>{{lesson.tutor.user.username}}</td>
+        <td>{{lesson.booking.date}}</td>
+        <td>{{lesson.booking.time}}</td>
+        <!--TODO: add urls with a-href for buttons to function later-->
+        <td class="text-end">
+            <a href="{% url 'get_lesson' lesson.booking.id %}" class="btn btn-primary btn-sm" >View</a>
+        </td>            
+    </tr>
+    {% endfor %}
+{% endblock %}
