@@ -40,6 +40,9 @@
             </a>
             <a href="{% url 'update_booking' booking.id %}" class="btn btn-warning">
                 Edit
+            </a>
+            <a href = "{% url 'assign_tutor' booking.id %}" class = "btn btn-warning">
+                Approve
             </a>            
             <a href="{% url 'delete_booking' booking.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
                 Delete
