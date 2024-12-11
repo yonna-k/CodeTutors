@@ -14,14 +14,14 @@ user_fixtures = [
         'email': 'john.doe@example.org',
         'first_name': 'John',
         'last_name': 'Doe',
-        'role': 'admin_profile',
+        'role': 'admin',
     },
     {
         'username': '@janedoe',
         'email': 'jane.doe@example.org',
         'first_name': 'Jane',
         'last_name': 'Doe',
-        'role': 'tutor_profile',
+        'role': 'tutor',
         'rate': 50.00,
         'specializes_in_python': True,
         'specializes_in_java': False,
@@ -34,7 +34,7 @@ user_fixtures = [
         'email': 'charlie.johnson@example.org',
         'first_name': 'Charlie',
         'last_name': 'Johnson',
-        'role': 'student_profile',
+        'role': 'student',
         'level': 'BEGINNER',
     }
 ]
@@ -111,7 +111,7 @@ class Command(BaseCommand):
             'email': email,
             'first_name': first_name,
             'last_name': last_name,
-            'role': 'student_profile',
+            'role': 'student',
             'level': level
         })
     
@@ -145,7 +145,7 @@ class Command(BaseCommand):
             'email': email,
             'first_name': first_name,
             'last_name': last_name,
-            'role': 'tutor_profile',
+            'role': 'tutor',
             'rate': rate,
             **specialties,
             **availability
@@ -153,8 +153,8 @@ class Command(BaseCommand):
 
     def try_create_user(self, data):
         """Try to create a user."""
-        try:  
-            role = data.pop('role', 'user')
+        try:
+            role = data.pop('role', 'other')
             profile_data = {k: v for k, v in data.items() if k not in ['username', 'email', 'password', 'first_name', 'last_name']}
             
             user = User.objects.create_user(
@@ -163,16 +163,17 @@ class Command(BaseCommand):
                 password=self.DEFAULT_PASSWORD,
                 first_name=data['first_name'],
                 last_name=data['last_name'],
+                role=role
             )
             print(f"Created User #{user.id} ({user.username})")
 
-            if role == 'tutor_profile':
+            if role == 'tutor':
                 Tutor.objects.create(user=user, **profile_data)
                 print(f"Created Tutor profile for User #{user.id} ({user.username})")
-            elif role == 'student_profile':
+            elif role == 'student':
                 Student.objects.create(user=user, **profile_data)
                 print(f"Created Student profile for User #{user.id} ({user.username})")
-            elif role == 'admin_profile':
+            elif role == 'admin':
                 Admin.objects.create(user=user, **profile_data)
                 print(f"Created Admin profile for User #{user.id} ({user.username})")
             else:
