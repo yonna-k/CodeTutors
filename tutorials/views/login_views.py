@@ -10,6 +10,9 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, StudentSignUpForm, TutorSignUpForm, AdminSignUpForm
 from tutorials.helpers import login_prohibited
+from tutorials.models import Booking, Lesson
+from django.utils import timezone
+from datetime import datetime
 
 
 @login_required
@@ -25,30 +28,77 @@ def dashboard(request):
     else:
         return redirect('dashboard')
 
-@login_required
-def tutor_dashboard(request):
-    return render(request, 'tutor_dashboard.html', {'user': request.user})
+# TODO: add @login_required
+# TODO: Update seed.py to seed times in the past
+# TODO: may also need to implement filtering out past lessons elsewhere
 
-@login_required
-def student_dashboard(request):
-    return render(request, 'student_dashboard.html', {'user': request.user})
-
-@login_required
-def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html', {'user': request.user})
-
-# TODO: review implementation
 #@login_required
 def student_dashboard(request):
     """Display the student's dashboard."""
-    current_user = request.user
-    return render(request, 'student_dashboard.html', {'user': current_user})
+    student = request.user.student_profile
+    now = timezone.now()
+    bookings = Booking.objects.filter(student=student)
+
+    previous_lessons = Lesson.objects.filter(
+        booking__student=student,
+        booking__date__lt=now.date()
+    ) | Lesson.objects.filter(
+        booking__student=student,
+        booking__date=now.date(),
+        booking__time__lt=now.time()
+    )
+    upcoming_lessons = Lesson.objects.filter(
+        booking__student=student,
+        booking__date__gt=now.date()
+    ) | Lesson.objects.filter(
+        booking__student=student,
+        booking__date=now.date(),
+        booking__time__gte=now.time()
+    )
+
+    context = {
+        'users': request.user,
+        'bookings': bookings,
+        'previous_lessons': previous_lessons.distinct(),
+        'upcoming_lessons': upcoming_lessons.distinct(),
+    }
+    return render(request, 'student_dashboard.html', context)
 
 #@login_required
 def tutor_dashboard(request):
     """Display the tutor's dashboard."""
-    current_user = request.user
-    return render(request, 'tutor_dashboard.html', {'user': current_user})
+    tutor = request.user.tutor_profile
+    now = timezone.now()
+
+    previous_lessons = Lesson.objects.filter(
+        tutor=tutor,
+        booking__date__lt=now.date()
+    ) | Lesson.objects.filter(
+        tutor=tutor,
+        booking__date=now.date(),
+        booking__time__lt=now.time()
+    )
+
+    upcoming_lessons = Lesson.objects.filter(
+        tutor=tutor,
+        booking__date__gt=now.date()
+    ) | Lesson.objects.filter(
+        tutor=tutor,
+        booking__date=now.date(),
+        booking__time__gte=now.time()
+    )
+
+    context = {
+        'users': request.user,
+        'previous_lessons': previous_lessons,
+        'upcoming_lessons': upcoming_lessons,
+    }
+    return render(request, 'tutor_dashboard.html', context)
+
+#@login_required
+#TODO
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html', {'user': request.user})
 
 def create_booking(request):
     if request.method == "POST":
