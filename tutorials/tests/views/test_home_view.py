@@ -31,17 +31,19 @@ class HomeViewTestCase(TestCase):
         self.client.login(username=self.user.username, password="Password123")
         response = self.client.get(self.url, follow=True)
 
-        # Determine the expected template based on the role
+        # Determine the expected URL based on the role
         if self.user.role == 'student':
+            expected_url = reverse('student_dashboard')
             expected_template = 'student_dashboard.html'
         elif self.user.role == 'tutor':
+            expected_url = reverse('tutor_dashboard')
             expected_template = 'tutor_dashboard.html'
         elif self.user.role == 'admin':
+            expected_url = reverse('admin_dashboard')
             expected_template = 'admin_dashboard.html'
         else:
             self.fail(f"Unexpected role for user @johndoe: {self.user.role}")
 
         # Check redirection and template used
-        redirect_url = reverse('dashboard')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, expected_template)

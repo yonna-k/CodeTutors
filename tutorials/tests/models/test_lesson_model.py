@@ -75,12 +75,12 @@ class LessonModelTest(TestCase):
     def test_lesson_deletes_when_booking_deletes(self):
         self.booking.delete()
         with self.assertRaises(Lesson.DoesNotExist):
-            Lesson.objects.get(booking__id=self.lesson.booking.id)
+            Lesson.objects.get(booking_id=self.lesson.booking_id)
 
     def test_lesson_deletes_when_tutor_deletes(self):
         self.tutor.delete()
         with self.assertRaises(Lesson.DoesNotExist):
-            Lesson.objects.get(booking__id=self.lesson.booking.id)
+            Lesson.objects.get(booking_id=self.lesson.booking_id)
 
     def test_invalid_booking_foreign_key(self):
         invalid_booking = Booking.objects.filter(id=999).first()
@@ -88,7 +88,7 @@ class LessonModelTest(TestCase):
         self._assert_lesson_is_invalid()
 
     def test_invalid_tutor_foreign_key(self):
-        invalid_tutor = Tutor.objects.filter(user__id=999).first()
+        invalid_tutor = Tutor.objects.filter(user_id=999).first()
         self.lesson.tutor = invalid_tutor
         self._assert_lesson_is_invalid()
 

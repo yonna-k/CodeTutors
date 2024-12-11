@@ -16,16 +16,26 @@ from tutorials.helpers import login_prohibited
 def dashboard(request):
     """Display the current user's dashboard."""
 
-    thisUser = request.user
-
-    if thisUser.role == 'student':
-        return render(request, 'student_dashboard.html', {'user': thisUser})
-    elif thisUser.role == 'tutor':
-        return render(request, 'tutor_dashboard.html', {'user': thisUser})
-    elif thisUser.role == 'admin':
-        return render(request, 'admin_dashboard.html', {'user': thisUser})
+    if request.user.role == 'student':
+        return redirect('student_dashboard')
+    elif request.user.role == 'tutor':
+        return redirect('tutor_dashboard')
+    elif request.user.role == 'admin':
+        return redirect('admin_dashboard')
     else:
-        return render(request, 'dashboard.html', {'user': thisUser})
+        return redirect('dashboard')
+
+@login_required
+def tutor_dashboard(request):
+    return render(request, 'tutor_dashboard.html', {'user': request.user})
+
+@login_required
+def student_dashboard(request):
+    return render(request, 'student_dashboard.html', {'user': request.user})
+
+@login_required
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html', {'user': request.user})
 
 
 @login_prohibited

@@ -41,7 +41,7 @@ class CreateBookingViewTestCase(TestCase):
 
         # Sample valid booking data
         self.valid_data = {
-            'student': self.student.user.id,
+            'student': self.student.user_id,
             'time': '14:30:00',
             'duration': 'short',
             'frequency': 'weekly',

@@ -24,11 +24,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_views.home, name='home'),
 
-    path('dashboard/', login_views.dashboard, name='dashboard'),
-    path('dashboard/admin/', login_views.dashboard, name='admin_dashboard'),
-    path('dashboard/student/', login_views.dashboard, name='student_dashboard'),
-    path('dashboard/tutor/', login_views.dashboard, name='tutor_dashboard'),
-
+    path('dashboard/', include([
+        path('', login_views.dashboard, name='dashboard'),
+        path('admin/', login_views.dashboard, name='admin_dashboard'),
+        path('student/', login_views.dashboard, name='student_dashboard'),
+        path('tutor/', login_views.dashboard, name='tutor_dashboard'),
+    ])
 
     path('log_in/', login_views.LogInView.as_view(), name='log_in'),
     path('log_out/', login_views.log_out, name='log_out'),
@@ -40,13 +41,14 @@ urlpatterns = [
         path('tutor/', login_views.TutorSignUpView.as_view(), name='tutor_sign_up'),
     ])),
 
-    #TODO: convert to include([])
-    path('manage/user/', admin_views.manage_users, name='manage_users'),
-    path('manage/student/', admin_views.manage_students, name='manage_students'),
-    path('manage/tutor/', admin_views.manage_tutors, name='manage_tutors'),
-    path('manage/booking/', admin_views.manage_bookings, name='manage_bookings'),
-    path('manage/lesson/', admin_views.manage_lessons, name='manage_lessons'),
-
+    path('manage/', include([   
+        path('user/', admin_views.manage_users, name='manage_users'),
+        path('student/', admin_views.manage_students, name='manage_students'),
+        path('tutor/', admin_views.manage_tutors, name='manage_tutors'),
+        path('booking/', admin_views.manage_bookings, name='manage_bookings'),
+        path('lesson/', admin_views.manage_lessons, name='manage_lessons'),
+    ])
+     
     path('user/<int:id>/', admin_views.get_user, name='get_user'),
     path('student/<int:id>/', admin_views.get_student, name='get_student'),
     path('tutor/<int:id>/', admin_views.get_tutor, name='get_tutor'),
@@ -65,5 +67,7 @@ urlpatterns = [
 
     path('dashboard/student/book_session', booking_views.create_booking, name='create_booking')
 
+    path('dashboard/student/book_session', booking_views.create_booking, name='create_booking'),
+    path('dashboard/admin/<int:booking_id>/assign_tutor/', lesson_views.assign_tutor, name="assign_tutor")
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
