@@ -1,3 +1,5 @@
+from sqlite3 import IntegrityError
+from django.http import Http404
 from django.test import TestCase
 from tutorials.models import User, Student, Tutor, Booking, Lesson, Admin
 from datetime import date, time
@@ -13,7 +15,8 @@ class AdminViewTestCase(TestCase):
         self.student = User.objects.get(pk=3)
 
         self.client.force_login(self.admin)
-    
+
+
     def test_manage_users_view(self):
         response = self.client.get(reverse('manage_users'))
         self.assertEqual(response.status_code, 200)
@@ -62,12 +65,22 @@ class AdminViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'entities/user.html')
         self.assertEqual(response.context['user'], self.student)
 
+    def test_get_user_view_not_found(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('get_user', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
+
     def test_get_student_view(self):
         student = Student.objects.get(user=self.student)
         response = self.client.get(reverse('get_student', args=[self.student.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'entities/student.html')
         self.assertEqual(response.context['student'], student)
+
+    def test_get_student_view_not_found(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('get_student', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
 
     def test_get_tutor_view(self):
         tutor = Tutor.objects.get(user=self.tutor)
@@ -76,12 +89,22 @@ class AdminViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'entities/tutor.html')
         self.assertEqual(response.context['tutor'], tutor)
 
+    def test_get_tutor_view_not_found(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('get_tutor', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
+
     def test_get_admin_view(self):
         admin = Admin.objects.get(user=self.admin)
         response = self.client.get(reverse('get_admin', args=[self.admin.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'entities/admin-profile.html')
         self.assertEqual(response.context['admin'], admin)
+
+    def test_get_admin_view_not_found(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('get_admin', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
 
     def test_get_booking_view(self):
         booking = Booking.objects.get(pk=2)
@@ -90,6 +113,11 @@ class AdminViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'entities/booking.html')
         self.assertEqual(response.context['booking'], booking)
 
+    def test_get_booking_view_not_found(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('get_booking', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
+
     def test_get_lesson_view(self):
         lesson = Lesson.objects.get(pk=1)
         response = self.client.get(reverse('get_lesson', args=[lesson.booking.id]))
@@ -97,10 +125,20 @@ class AdminViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'entities/lesson.html')
         self.assertEqual(response.context['lesson'], lesson)
 
+    def test_get_lesson_view_not_found(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('get_lesson', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
+
     def test_delete_user_view(self):
         response = self.client.post(reverse('delete_user', args=[self.tutor.id]))
         self.assertRedirects(response, reverse('manage_users'))
         self.assertFalse(User.objects.filter(pk=self.tutor.id).exists())
+
+    def test_delete_invalid_user(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('delete_user', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_student_view(self):
         student = Student.objects.get(user=self.student)
@@ -108,11 +146,21 @@ class AdminViewTestCase(TestCase):
         self.assertRedirects(response, reverse('manage_students'))
         self.assertFalse(Student.objects.filter(pk=student.user_id).exists())
 
+    def test_delete_invalid_student(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('delete_student', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
+
     def test_delete_tutor_view(self):
         tutor = Tutor.objects.get(user=self.tutor)
         response = self.client.post(reverse('delete_tutor', args=[self.tutor.id]))
         self.assertRedirects(response, reverse('manage_tutors'))
         self.assertFalse(Tutor.objects.filter(pk=tutor.user_id).exists())
+
+    def test_delete_invalid_tutor(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('delete_tutor', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_admin_view(self):
         admin = Admin.objects.get(user=self.admin)
@@ -120,14 +168,29 @@ class AdminViewTestCase(TestCase):
         self.assertRedirects(response, reverse('manage_admins'))
         self.assertFalse(Admin.objects.filter(pk=admin.user_id).exists())
 
+    def test_delete_invalid_admin(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('delete_admin', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
+
     def test_delete_booking_view(self):
         booking = Booking.objects.get(pk=2)
         response = self.client.post(reverse('delete_booking', args=[booking.id]))
         self.assertRedirects(response, reverse('manage_bookings'))
         self.assertFalse(Booking.objects.filter(pk=booking.id).exists())
 
+    def test_delete_invalid_booking(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('delete_booking', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
+
     def test_delete_lesson_view(self):
         lesson = Lesson.objects.get(pk=1)
         response = self.client.post(reverse('delete_lesson', args=[lesson.booking.id]))
         self.assertRedirects(response, reverse('manage_lessons'))
         self.assertFalse(Lesson.objects.filter(pk=lesson.booking_id).exists())
+    
+    def test_delete_invalid_lesson(self):
+        invalid_id = 99999 #non-existent
+        response=self.client.get(reverse('delete_lesson', args=[invalid_id]))
+        self.assertEqual(response.status_code, 404)
