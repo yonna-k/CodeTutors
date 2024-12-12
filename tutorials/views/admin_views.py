@@ -13,33 +13,33 @@ from itertools import chain
 #TODO: add pagination functionality
 
 def manage_users(request):
-    "Renders the manage entities template with all user data"
+    """Renders the manage entities template with all user data"""
     users = User.objects.all().order_by('id')
     return render(request, "manage/manage_users.html", {'users': users})
 
 def manage_students(request):
-    "Renders the manage entities template with student data"
+    """Renders the manage entities template with student data"""
     students = Student.objects.all().order_by('user__id')
     return render(request, "manage/manage_students.html", {'users': students})
 
 def manage_tutors(request):
-    "Renders the manage entities template with tutor data"
+    """Renders the manage entities template with tutor data"""
     tutors = Tutor.objects.all().order_by('user__id')
     return render(request, "manage/manage_tutors.html", {'users': tutors})
 
 def manage_admins(request):
-    "Renders the manage entities template with admin data."
+    """Renders the manage entities template with admin data."""
     admins = Admin.objects.all().order_by('user__id')  # Replace Admin with your admin model
     return render(request, "manage/manage_admins.html", {'users': admins})
 
 
 def manage_bookings(request):
-    "Renders the manage entities template with booking data"
+    """Renders the manage entities template with booking data"""
     bookings = Booking.objects.filter(status="OPEN").order_by('id')
     return render(request, "manage/manage_bookings.html", {'bookings': bookings})
 
 def manage_lessons(request):
-    "Renders the manage entities template with lesson data"
+    """Renders the manage entities template with lesson data"""
     lessons = Lesson.objects.all().order_by('booking_id')
     return render(request, "manage/manage_lessons.html", {'lessons': lessons})
 
@@ -56,7 +56,7 @@ def add_admin(request):
     return render(request, "add_admin.html", {"form": form})
 
 def get_user(request, id):
-    "Renders the specific user template"
+    """Renders the specific user template"""
     try:
         context = {'user': User.objects.get(pk=id)}
     except User.DoesNotExist:
@@ -64,7 +64,7 @@ def get_user(request, id):
     return render(request, 'entities/user.html', context)
 
 def get_student(request, id):
-    "Renders the specific student template"
+    """Renders the specific student template"""
     try:
         context = {'student': Student.objects.get(user__id=id)}
     except Student.DoesNotExist:
@@ -72,7 +72,7 @@ def get_student(request, id):
     return render(request, 'entities/student.html', context)
 
 def get_tutor(request, id):
-    "Renders the specific tutor template"
+    """Renders the specific tutor template"""
     try:
         context = {'tutor': Tutor.objects.get(user__id=id)}
     except Tutor.DoesNotExist:
@@ -80,7 +80,7 @@ def get_tutor(request, id):
     return render(request, 'entities/tutor.html', context)
 
 def get_admin(request, id):
-    "Renders the specific admin template."
+    """Renders the specific admin template."""
     try:
         context = {'admin': Admin.objects.get(user__id=id)}  
     except Admin.DoesNotExist:
@@ -89,7 +89,7 @@ def get_admin(request, id):
 
 
 def get_booking(request, id):
-    "Renders the specific booking template"
+    """Renders the specific booking template"""
     try:
         booking = Booking.objects.get(pk=id)
     except User.DoesNotExist:
@@ -98,7 +98,7 @@ def get_booking(request, id):
     return render(request, 'entities/booking.html', context)
 
 def get_lesson(request, id):
-    "Renders the specific lesson template"
+    """Renders the specific lesson template"""
     try:
         lesson = Lesson.objects.get(booking__id=id)
     except User.DoesNotExist:
@@ -107,7 +107,7 @@ def get_lesson(request, id):
     return render(request, 'entities/lesson.html', context)
 
 def delete_user(request, id):
-    "Delete the specified user"
+    """Delete the specified user"""
     try:
         user = User.objects.get(pk=id)
         user.delete()
@@ -116,7 +116,7 @@ def delete_user(request, id):
     return redirect('manage_users')
 
 def delete_student(request, id):
-    "Delete the specified student as well as the user"
+    """Delete the specified student as well as the user"""
     try:
         student = Student.objects.get(user__id=id)
         student.delete()
@@ -125,7 +125,7 @@ def delete_student(request, id):
     return redirect('manage_students')
 
 def delete_tutors(request, id):
-    "Delete the specified tutor as well as the user"
+    """Delete the specified tutor as well as the user"""
     try:
         tutor = Tutor.objects.get(user__id=id)
         tutor.delete()
@@ -134,7 +134,7 @@ def delete_tutors(request, id):
     return redirect('manage_tutors')
 
 def delete_admins(request, id):
-    "Delete the specified admin as well as the associated user."
+    """Delete the specified admin as well as the associated user."""
     try:
         admin = Admin.objects.get(user__id=id)  # Replace Admin with your actual admin model
         admin.delete()
@@ -144,7 +144,7 @@ def delete_admins(request, id):
 
 
 def delete_booking(request, id):
-    "Delete the specified booking"
+    """Delete the specified booking"""
     try:
         booking = Booking.objects.get(pk=id)
         booking.delete()
@@ -155,7 +155,7 @@ def delete_booking(request, id):
     return redirect('dashboard')
 
 def delete_lesson(request, id):
-    "Delete the specific lesson as well as the booking"
+    """Delete the specific lesson as well as the booking"""
     try:
         lesson = Lesson.objects.get(booking_id=id)
         lesson.delete()
