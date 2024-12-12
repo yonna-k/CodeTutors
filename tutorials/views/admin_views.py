@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from tutorials.models import User, Student, Tutor, Booking, Lesson, Admin
@@ -92,7 +93,7 @@ def get_booking(request, id):
     """Renders the specific booking template"""
     try:
         booking = Booking.objects.get(pk=id)
-    except User.DoesNotExist:
+    except Booking.DoesNotExist:
         raise Http404(f"Could not find booking with ID {id}")
     context = {'booking': booking, 'role': request.user.role}
     return render(request, 'entities/booking.html', context)
@@ -101,7 +102,7 @@ def get_lesson(request, id):
     """Renders the specific lesson template"""
     try:
         lesson = Lesson.objects.get(booking__id=id)
-    except User.DoesNotExist:
+    except Lesson.DoesNotExist:
         raise Http404(f"Could not find lesson with ID {id}")
     context = {'lesson': lesson, 'role' : request.user.role}
     return render(request, 'entities/lesson.html', context)
