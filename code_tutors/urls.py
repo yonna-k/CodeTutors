@@ -50,6 +50,7 @@ urlpatterns = [
         path('user/', admin_views.manage_users, name='manage_users'),
         path('student/', admin_views.manage_students, name='manage_students'),
         path('tutor/', admin_views.manage_tutors, name='manage_tutors'),
+        path('admin-profile/', admin_views.manage_admins, name='manage_admins'),
         path('booking/', admin_views.manage_bookings, name='manage_bookings'),
         path('lesson/', admin_views.manage_lessons, name='manage_lessons'),
     ])),
@@ -57,12 +58,14 @@ urlpatterns = [
     path('user/<int:id>/', admin_views.get_user, name='get_user'),
     path('student/<int:id>/', admin_views.get_student, name='get_student'),
     path('tutor/<int:id>/', admin_views.get_tutor, name='get_tutor'),
+    path('admin-profile/<int:id>/', admin_views.get_admin, name='get_admin'),
     path('booking/<int:id>/', admin_views.get_booking, name='get_booking'),
     path('lesson/<int:id>/', admin_views.get_lesson, name='get_lesson'),
 
     path('delete_user/<int:id>/', admin_views.delete_user, name='delete_user'),
     path('delete_student/<int:id>/', admin_views.delete_student, name='delete_student'),
     path('delete_tutor/<int:id>/', admin_views.delete_tutors, name='delete_tutor'),
+    path('delete_admin/<int:id>/', admin_views.delete_admins, name='delete_admin'),
     path('delete_booking/<int:id>/', admin_views.delete_booking, name='delete_booking'),
     path('delete_lesson/<int:id>/', admin_views.delete_lesson, name='delete_lesson'),
 
