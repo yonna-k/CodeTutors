@@ -25,7 +25,7 @@ class AssignTutorViewTest(TestCase):
         self.tutor_1 = Tutor.objects.create(
             user=user,
             specializes_in_python=True,
-            specializes_in_C=True,
+            specializes_in_c=True,
             available_monday=True,
             available_tuesday=True,
             rate=9.00,  # Hourly rate in the preferred currency
@@ -42,7 +42,7 @@ class AssignTutorViewTest(TestCase):
 
         self.tutor_2 = Tutor.objects.create(
             user=user2,
-            specializes_in_C=True,
+            specializes_in_c=True,
             available_monday=True,
             available_wednesday=True,
             rate=10.00,  # Hourly rate in the preferred currency
