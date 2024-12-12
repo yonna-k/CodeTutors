@@ -166,8 +166,9 @@ class LogInView(LoginProhibitedMixin, View):
         self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
         user = form.get_user()
         if user is not None:
-            login(request, user)
-            return redirect(self.next)
+            if (hasattr(user, "tutor_profile") or hasattr(user, "student_profile") or hasattr(user, "admin_profile")):
+                login(request, user)
+                return redirect(self.next)
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid!")
         return self.render()
 

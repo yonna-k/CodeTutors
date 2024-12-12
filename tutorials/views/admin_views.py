@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from tutorials.models import User, Student, Tutor, Booking, Lesson, Admin
@@ -19,37 +20,37 @@ def is_admin(request):
 
 @user_passes_test(is_admin)
 def manage_users(request):
-    "Renders the manage entities template with all user data"
+    """Renders the manage entities template with all user data"""
     users = User.objects.all().order_by('id')
     return render(request, "manage/manage_users.html", {'users': users})
 
 @user_passes_test(is_admin)
 def manage_students(request):
-    "Renders the manage entities template with student data"
+    """Renders the manage entities template with student data"""
     students = Student.objects.all().order_by('user__id')
     return render(request, "manage/manage_students.html", {'users': students})
 
 @user_passes_test(is_admin)
 def manage_tutors(request):
-    "Renders the manage entities template with tutor data"
+    """Renders the manage entities template with tutor data"""
     tutors = Tutor.objects.all().order_by('user__id')
     return render(request, "manage/manage_tutors.html", {'users': tutors})
 
 @user_passes_test(is_admin)
 def manage_admins(request):
-    "Renders the manage entities template with admin data."
+    """Renders the manage entities template with admin data."""
     admins = Admin.objects.all().order_by('user__id')  # Replace Admin with your admin model
     return render(request, "manage/manage_admins.html", {'users': admins})
 
 @user_passes_test(is_admin)
 def manage_bookings(request):
-    "Renders the manage entities template with booking data"
+    """Renders the manage entities template with booking data"""
     bookings = Booking.objects.filter(status="OPEN").order_by('id')
     return render(request, "manage/manage_bookings.html", {'bookings': bookings})
 
 @user_passes_test(is_admin)
 def manage_lessons(request):
-    "Renders the manage entities template with lesson data"
+    """Renders the manage entities template with lesson data"""
     lessons = Lesson.objects.all().order_by('booking_id')
     return render(request, "manage/manage_lessons.html", {'lessons': lessons})
 
