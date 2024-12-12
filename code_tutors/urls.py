@@ -23,6 +23,7 @@ from tutorials.views import login_views, booking_views, admin_views, lesson_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_views.home, name='home'),
+    path('forbidden/', login_views.forbidden, name='forbidden'),
 
     path('sign_up/', include([
         path('student/', login_views.StudentSignUpView.as_view(), name='student_sign_up'),

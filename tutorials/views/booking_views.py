@@ -3,11 +3,15 @@ from tutorials.forms.booking_forms import BookingForm
 from tutorials.models.student_model import Student
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 # needs to be changed in accordance with the refactoring of Student model
 @login_required
 def create_booking(request):
     """View to handle booking creation."""
+    if request.user.role != 'student':
+        raise PermissionDenied
+    
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():

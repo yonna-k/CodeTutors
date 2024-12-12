@@ -2,47 +2,58 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from tutorials.models import User, Student, Tutor, Booking, Lesson, Admin
 from tutorials.forms.login_forms import AdminSignUpForm
-from django.http import Http404
-from django.http import HttpResponse
-from itertools import chain
+from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
 
 
 #TODO: use class based views?
-#TODO: use @login_required once Admin class made
-#TODO: implement Create/Update functionalities
+#TODO: use login_required once Admin class made
 #TODO: add pagination functionality
 
+def is_admin(request):
+    """Check if the user is an admin or the owner of the lesson"""
+    if request.role == 'admin':
+        return True
+    raise PermissionDenied("You are not authorized to delete this lesson.")
+
+@user_passes_test(is_admin)
 def manage_users(request):
     "Renders the manage entities template with all user data"
     users = User.objects.all().order_by('id')
     return render(request, "manage/manage_users.html", {'users': users})
 
+@user_passes_test(is_admin)
 def manage_students(request):
     "Renders the manage entities template with student data"
     students = Student.objects.all().order_by('user__id')
     return render(request, "manage/manage_students.html", {'users': students})
 
+@user_passes_test(is_admin)
 def manage_tutors(request):
     "Renders the manage entities template with tutor data"
     tutors = Tutor.objects.all().order_by('user__id')
     return render(request, "manage/manage_tutors.html", {'users': tutors})
 
+@user_passes_test(is_admin)
 def manage_admins(request):
     "Renders the manage entities template with admin data."
     admins = Admin.objects.all().order_by('user__id')  # Replace Admin with your admin model
     return render(request, "manage/manage_admins.html", {'users': admins})
 
-
+@user_passes_test(is_admin)
 def manage_bookings(request):
     "Renders the manage entities template with booking data"
     bookings = Booking.objects.filter(status="OPEN").order_by('id')
     return render(request, "manage/manage_bookings.html", {'bookings': bookings})
 
+@user_passes_test(is_admin)
 def manage_lessons(request):
     "Renders the manage entities template with lesson data"
     lessons = Lesson.objects.all().order_by('booking_id')
     return render(request, "manage/manage_lessons.html", {'lessons': lessons})
 
+@user_passes_test(is_admin)
 def add_admin(request):
     """Allow superusers to add new admin users."""
     if request.method == "POST":
@@ -55,113 +66,88 @@ def add_admin(request):
 
     return render(request, "add_admin.html", {"form": form})
 
+@user_passes_test(is_admin)
 def get_user(request, id):
     "Renders the specific user template"
-    try:
-        context = {'user': User.objects.get(pk=id)}
-    except User.DoesNotExist:
-        raise Http404(f"Could not find student with ID {id}")
-    return render(request, 'entities/user.html', context)
+    user = get_object_or_404(User, pk=id)
+    return render(request, 'entities/user.html', {'user': user})
 
+@user_passes_test(is_admin)
 def get_student(request, id):
     "Renders the specific student template"
-    try:
-        context = {'student': Student.objects.get(user__id=id)}
-    except Student.DoesNotExist:
-        raise Http404(f"Could not find student with ID {id}")
-    return render(request, 'entities/student.html', context)
+    student = get_object_or_404(Student, user__id=id)
+    return render(request, 'entities/student.html', {'student': student})
 
+@user_passes_test(is_admin)
 def get_tutor(request, id):
     "Renders the specific tutor template"
-    try:
-        context = {'tutor': Tutor.objects.get(user__id=id)}
-    except Tutor.DoesNotExist:
-        raise Http404(f"Could not find tutor with ID {id}")
-    return render(request, 'entities/tutor.html', context)
+    tutor = get_object_or_404(Tutor, user__id=id)
+    return render(request, 'entities/tutor.html', {'tutor': tutor})
 
+@user_passes_test(is_admin)
 def get_admin(request, id):
     "Renders the specific admin template."
-    try:
-        context = {'admin': Admin.objects.get(user__id=id)}  
-    except Admin.DoesNotExist:
-        raise Http404(f"Could not find admin with ID {id}")
-    return render(request, 'entities/admin-profile.html', context)
+    admin = get_object_or_404(Admin, user__id=id)
+    return render(request, 'entities/admin-profile.html', {'admin': admin})
 
-
+@login_required
 def get_booking(request, id):
     "Renders the specific booking template"
-    try:
-        booking = Booking.objects.get(pk=id)
-    except User.DoesNotExist:
-        raise Http404(f"Could not find booking with ID {id}")
+    booking = get_object_or_404(Booking, pk=id)
     context = {'booking': booking, 'role': request.user.role}
     return render(request, 'entities/booking.html', context)
 
+@login_required
 def get_lesson(request, id):
     "Renders the specific lesson template"
-    try:
-        lesson = Lesson.objects.get(booking__id=id)
-    except User.DoesNotExist:
-        raise Http404(f"Could not find lesson with ID {id}")
-    context = {'lesson': lesson, 'role' : request.user.role}
+    lesson = get_object_or_404(Lesson, booking__id=id)
+    context = {'lesson': lesson, 'role': request.user.role}
     return render(request, 'entities/lesson.html', context)
 
+@user_passes_test(is_admin)
 def delete_user(request, id):
     "Delete the specified user"
-    try:
-        user = User.objects.get(pk=id)
-        user.delete()
-    except User.DoesNotExist:
-        raise Http404(f"Could not find user with ID {id}")
+    user = get_object_or_404(User, pk=id)
+    user.delete()
     return redirect('manage_users')
 
+@user_passes_test(is_admin)
 def delete_student(request, id):
     "Delete the specified student as well as the user"
-    try:
-        student = Student.objects.get(user__id=id)
-        student.delete()
-    except Student.DoesNotExist:
-        raise Http404(f"Could not find student with ID {id}")
+    student = get_object_or_404(Student, user__id=id)
+    student.delete()
     return redirect('manage_students')
 
+@user_passes_test(is_admin)
 def delete_tutors(request, id):
     "Delete the specified tutor as well as the user"
-    try:
-        tutor = Tutor.objects.get(user__id=id)
-        tutor.delete()
-    except Tutor.DoesNotExist:
-        raise Http404(f"Could not find tutor with ID {id}")
+    tutor = get_object_or_404(Tutor, user__id=id)
+    tutor.delete()
     return redirect('manage_tutors')
 
+@user_passes_test(is_admin)
 def delete_admins(request, id):
     "Delete the specified admin as well as the associated user."
-    try:
-        admin = Admin.objects.get(user__id=id)  # Replace Admin with your actual admin model
-        admin.delete()
-    except Admin.DoesNotExist:
-        raise Http404(f"Could not find admin with ID {id}")
-    return redirect('manage_admins')  # Replace with the name of your admin management URL
-
+    admin = get_object_or_404(Admin, user__id=id)
+    admin.delete()
+    return redirect('manage_admins')
 
 def delete_booking(request, id):
     "Delete the specified booking"
-    try:
-        booking = Booking.objects.get(pk=id)
-        booking.delete()
-    except Booking.DoesNotExist:
-        raise Http404(f"Could not find booking with ID {id}")
+    booking = get_object_or_404(Booking, pk=id)
+    if not(id == booking.id or request.user.role == "admin"):
+        raise PermissionDenied("You are not authorized to delete this lesson.")
+    booking.delete()
     if request.user.role == "admin":
         return redirect('manage_bookings')
     return redirect('dashboard')
 
 def delete_lesson(request, id):
     "Delete the specific lesson as well as the booking"
-    try:
-        lesson = Lesson.objects.get(booking_id=id)
-        lesson.delete()
-    except Lesson.DoesNotExist:
-        raise Http404(f"Could not find lesson with ID {id}")
+    lesson = get_object_or_404(Lesson, booking_id=id)
+    if not(id == lesson.booking.id or request.user.role == "admin"):
+        raise PermissionDenied("You are not authorized to delete this lesson.")
+    lesson.delete()
     if request.user.role == "admin":
         return redirect('manage_lessons')
     return redirect('dashboard')
-

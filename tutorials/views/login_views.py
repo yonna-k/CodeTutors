@@ -12,7 +12,8 @@ from tutorials.forms.login_forms import LogInForm, PasswordForm, UserForm, Stude
 from tutorials.helpers import login_prohibited
 from tutorials.models import Booking, Lesson
 from django.utils import timezone
-from datetime import datetime
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
 
 
 @login_required
@@ -26,66 +27,70 @@ def dashboard(request):
     elif request.user.role == 'admin':
         return redirect('admin_dashboard')
     else:
-        return redirect('dashboard')
+        raise Http404("Invalid role.")
 
-# TODO: add @login_required
-# TODO: may also need to implement filtering out past lessons elsewhere
+def forbidden(request):
+    """Render the 403 page."""
+    return render(request, '403.html')
 
-#@login_required
-def student_dashboard(request):
-    """Display the student's dashboard."""
-    student = request.user.student_profile
+def get_lessons(user, role):
+    """Helper method to get previous and upcoming lessons."""
     now = timezone.now()
-    bookings = Booking.objects.filter(student=student, status="OPEN")
+    if role == 'student':
+        profile = user.student_profile
+        filter_kwargs = {'booking__student': profile}
+    elif role == 'tutor':
+        profile = user.tutor_profile
+        filter_kwargs = {'tutor': profile}
+    else:
+        raise PermissionDenied("Invalid role")
 
     previous_lessons = Lesson.objects.filter(
-        booking__student=student,
+        **filter_kwargs,
         booking__date__lt=now.date()
     ) | Lesson.objects.filter(
-        booking__student=student,
+        **filter_kwargs,
         booking__date=now.date(),
         booking__time__lt=now.time()
     )
+
     upcoming_lessons = Lesson.objects.filter(
-        booking__student=student,
+        **filter_kwargs,
         booking__date__gt=now.date()
     ) | Lesson.objects.filter(
-        booking__student=student,
+        **filter_kwargs,
         booking__date=now.date(),
         booking__time__gte=now.time()
     )
+    
+    return previous_lessons.distinct(), upcoming_lessons.distinct()
+
+@login_required
+def student_dashboard(request):
+    """Display the student's dashboard."""
+    if request.user.role != 'student':
+        raise PermissionDenied
+
+    student = request.user.student_profile
+    bookings = Booking.objects.filter(student=student, status="OPEN")
+
+    previous_lessons, upcoming_lessons = get_lessons(request.user, 'student')
 
     context = {
-        'users': request.user,
+        'user': request.user,  # Corrected 'users' to 'user'
         'bookings': bookings,
-        'previous_lessons': previous_lessons.distinct(),
-        'upcoming_lessons': upcoming_lessons.distinct(),
+        'previous_lessons': previous_lessons,
+        'upcoming_lessons': upcoming_lessons,
     }
     return render(request, 'student_dashboard.html', context)
 
-#@login_required
+@login_required
 def tutor_dashboard(request):
     """Display the tutor's dashboard."""
-    tutor = request.user.tutor_profile
-    now = timezone.now()
-
-    previous_lessons = Lesson.objects.filter(
-        tutor=tutor,
-        booking__date__lt=now.date()
-    ) | Lesson.objects.filter(
-        tutor=tutor,
-        booking__date=now.date(),
-        booking__time__lt=now.time()
-    )
-
-    upcoming_lessons = Lesson.objects.filter(
-        tutor=tutor,
-        booking__date__gt=now.date()
-    ) | Lesson.objects.filter(
-        tutor=tutor,
-        booking__date=now.date(),
-        booking__time__gte=now.time()
-    )
+    if request.user.role != 'tutor':
+        raise PermissionDenied
+    
+    previous_lessons, upcoming_lessons = get_lessons(request.user, 'tutor')
 
     context = {
         'users': request.user,
@@ -94,8 +99,11 @@ def tutor_dashboard(request):
     }
     return render(request, 'tutor_dashboard.html', context)
 
-#TODO @login_required
+@login_required
 def admin_dashboard(request):
+    """Render the admin's dashboard."""
+    if request.user.role != 'admin':
+        raise PermissionDenied
     return render(request, 'admin_dashboard.html', {'user': request.user})
 
 def create_booking(request):
