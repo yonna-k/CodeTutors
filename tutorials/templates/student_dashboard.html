@@ -26,6 +26,9 @@
                     <td>{{ booking.duration }}</td>
                     <td>{{ booking.lang }}</td>
                     <td>{{ booking.venue }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'get_booking' booking.id %}" class="btn btn-primary btn-sm" >View</a>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -64,6 +67,9 @@
                     <td>{{ lesson.tutor }}</td>
                     <td>{{ lesson.booking.lang }}</td>
                     <td>{{ lesson.booking.venue }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'get_lesson' lesson.booking.id %}" class="btn btn-primary btn-sm" >View</a>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -99,6 +105,9 @@
                     <td>{{ lesson.tutor }}</td>
                     <td>{{ lesson.booking.lang }}</td>
                     <td>{{ lesson.invoice }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'get_lesson' lesson.booking.id %}" class="btn btn-primary btn-sm" >View</a>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>

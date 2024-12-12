@@ -36,7 +36,7 @@ def student_dashboard(request):
     """Display the student's dashboard."""
     student = request.user.student_profile
     now = timezone.now()
-    bookings = Booking.objects.filter(student=student)
+    bookings = Booking.objects.filter(student=student, status="OPEN")
 
     previous_lessons = Lesson.objects.filter(
         booking__student=student,
