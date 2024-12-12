@@ -41,10 +41,16 @@
                 <p><strong>Status</strong>: {{ lesson.booking.status }}</p>
             </div>
 
-            <a href="{% url 'manage_lessons' %}" class="btn btn-primary">
-                OK
-            </a>
-                       
+            {% if role == "admin" %}
+                <a href="{% url 'manage_lessons' %}" class="btn btn-primary">
+                    OK
+                </a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                    OK
+                </a>
+            {% endif %}
+                   
             <a href="{% url 'delete_lesson' lesson.booking.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
                 Delete
             </a>

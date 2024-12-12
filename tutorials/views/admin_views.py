@@ -76,18 +76,19 @@ def get_tutor(request, id):
 def get_booking(request, id):
     "Renders the specific booking template"
     try:
-        context = {'booking': Booking.objects.get(pk=id)}
+        booking = Booking.objects.get(pk=id)
     except User.DoesNotExist:
         raise Http404(f"Could not find booking with ID {id}")
+    context = {'booking': booking, 'role': request.user.role}
     return render(request, 'entities/booking.html', context)
 
 def get_lesson(request, id):
     "Renders the specific lesson template"
     try:
         lesson = Lesson.objects.get(booking__id=id)
-        context = {'lesson': lesson}
     except User.DoesNotExist:
         raise Http404(f"Could not find lesson with ID {id}")
+    context = {'lesson': lesson, 'role' : request.user.role}
     return render(request, 'entities/lesson.html', context)
 
 def delete_user(request, id):
@@ -124,7 +125,9 @@ def delete_booking(request, id):
         booking.delete()
     except Booking.DoesNotExist:
         raise Http404(f"Could not find booking with ID {id}")
-    return redirect('manage_bookings')
+    if request.user.role == "admin":
+        return redirect('manage_bookings')
+    return redirect('dashboard')
 
 def delete_lesson(request, id):
     "Delete the specific lesson as well as the booking"
@@ -133,5 +136,7 @@ def delete_lesson(request, id):
         lesson.delete()
     except Lesson.DoesNotExist:
         raise Http404(f"Could not find lesson with ID {id}")
-    return redirect('manage_lessons')
+    if request.user.role == "admin":
+        return redirect('manage_lessons')
+    return redirect('dashboard')
 
