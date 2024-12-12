@@ -8,19 +8,72 @@
       "username": "@janedoe",
       "email": "janedoe@example.org",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
-      "is_active": true
+      "is_active": true,
+      "role": "tutor"
+    }
+  },
+  {
+    "model": "tutorials.tutor",
+    "pk": 2,
+    "fields": {
+      "user_id": 2,
+      "specializes_in_python": true,
+      "specializes_in_java": false,
+      "specializes_in_C": false,
+      "specializes_in_ruby": true,
+      "specializes_in_SQL": true,
+      "available_monday": true,
+      "available_tuesday": true,
+      "available_wednesday": false,
+      "available_thursday": true,
+      "available_friday": false,
+      "available_saturday": true,
+      "available_sunday": true,
+      "rate": "50.00"
     }
   },
   {
     "model": "tutorials.user",
     "pk": 3,
     "fields": {
-      "first_name": "Petra",
-      "last_name": "Pickles",
-      "username": "@petrapickles",
-      "email": "petrapickles@example.org",
+      "first_name": "Charlie",
+      "last_name": "Smith",
+      "username": "@charlie",
+      "email": "charlie@example.org",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
-      "is_active": true
+      "is_active": true,
+      "role": "student"
+    }
+  },
+  {
+    "model": "tutorials.student",
+    "pk": 3,
+    "fields": {
+      "user_id": 3,
+      "level": "BEGINNER"
+    }
+  },
+  {
+    "model": "tutorials.booking",
+    "pk": 1,
+    "fields": {
+      "student_id": 3,
+      "date": "2025-1-31",
+      "time": "10:00:00",
+      "venue": "Code Tutors HQ",
+      "status": "CLOSED",
+      "frequency": "weekly",
+      "duration": "short",
+      "day": "Monday",
+      "lang": "Python"
+    }
+  },
+  {
+    "model": "tutorials.lesson",
+    "pk": 1,
+    "fields": {
+      "booking": 1,
+      "tutor": 2
     }
   },
   {
@@ -28,11 +81,35 @@
     "pk": 4,
     "fields": {
       "first_name": "Peter",
-      "last_name": "Pickles",
-      "username": "@peterpickles",
-      "email": "peterpickles@example.org",
+      "last_name": "Pickle",
+      "username": "@peter",
+      "email": "peterpickle@example.org",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
-      "is_active": true
+      "is_active": true,
+      "role": "student"
+    }
+  },
+  {
+    "model": "tutorials.student",
+    "pk": 4,
+    "fields": {
+      "user_id": 4,
+      "level": "INTERMEDIATE"
+    }
+  },
+  {
+    "model": "tutorials.booking",
+    "pk": 2,
+    "fields": {
+      "student_id": 4,
+      "date": "2024-12-12",
+      "time": "10:00:00",
+      "venue": "Code Tutors HQ",
+      "status": "OPEN",
+      "frequency": "weekly",
+      "duration": "short",
+      "day": "Monday",
+      "lang": "Python"
     }
   }
 ]
