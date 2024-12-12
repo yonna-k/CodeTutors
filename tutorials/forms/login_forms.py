@@ -133,11 +133,8 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling unregistered users to sign up."""
 
     LANGUAGES = ['Python', 'Java', 'C', 'Ruby', 'SQL']
-    LANG_MAP = {
-        "C" : "C", "SQL" : "SQL"
-    }
     for lang in LANGUAGES:
-        field_name = f'specializes_in_{LANG_MAP.get(lang, lang.lower())}'
+        field_name = f'specializes_in_{lang.lower()}'
         vars()[field_name] = forms.ChoiceField(
             choices=[('Yes', 'Yes'), ('No', 'No')],
             initial='No',
@@ -176,7 +173,7 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
     class Meta:
         """Form options."""
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'specializes_in_python', 'specializes_in_java', 'specializes_in_C', 'specializes_in_ruby', 'specializes_in_SQL',
+        fields = ['first_name', 'last_name', 'username', 'email', 'specializes_in_python', 'specializes_in_java', 'specializes_in_c', 'specializes_in_ruby', 'specializes_in_sql',
                   'available_monday', 'available_tuesday', 'available_wednesday', 'available_thursday', 'available_friday', 'available_saturday', 'available_sunday', 'rate']
 
     def save(self, commit=True):
@@ -197,9 +194,9 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
         role = self.cleaned_data.get('role')
         specializes_in_Python = MAP.get(self.cleaned_data.get('specializes_in_python'))
         specializes_in_Java = MAP.get(self.cleaned_data.get('specializes_in_java'))
-        specializes_in_C = MAP.get(self.cleaned_data.get('specializes_in_C'))
+        specializes_in_C = MAP.get(self.cleaned_data.get('specializes_in_c'))
         specializes_in_Ruby = MAP.get(self.cleaned_data.get('specializes_in_ruby'))
-        specializes_in_SQL = MAP.get(self.cleaned_data.get('specializes_in_SQL'))
+        specializes_in_SQL = MAP.get(self.cleaned_data.get('specializes_in_sql'))
         available_Monday = MAP.get(self.cleaned_data.get('available_monday'))
         available_Tuesday = MAP.get(self.cleaned_data.get('available_tuesday'))
         available_Wednesday = MAP.get(self.cleaned_data.get('available_wednesday'))
@@ -215,9 +212,9 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
             user=user, 
             specializes_in_python=specializes_in_Python, 
             specializes_in_java=specializes_in_Java, 
-            specializes_in_C=specializes_in_C,
+            specializes_in_c=specializes_in_C,
             specializes_in_ruby=specializes_in_Ruby,
-            specializes_in_SQL=specializes_in_SQL,
+            specializes_in_sql=specializes_in_SQL,
             available_monday=available_Monday,
             available_tuesday=available_Tuesday,
             available_wednesday=available_Wednesday,

@@ -15,8 +15,8 @@ def assign_tutor(request, booking_id):
     LANGUAGE_FIELD_MAPPING = {
         "Python": "specializes_in_python",
         "Java": "specializes_in_java",
-        "C": "specializes_in_C",
-        "SQL": "specializes_in_SQL",
+        "C": "specializes_in_c",
+        "SQL": "specializes_in_sql",
         "Ruby": "specializes_in_ruby",
     }
     field_name = LANGUAGE_FIELD_MAPPING.get(booking.lang)
