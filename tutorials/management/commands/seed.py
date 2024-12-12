@@ -253,6 +253,7 @@ class Command(BaseCommand):
             print(f"Lesson created for Booking #{booking.id} with Tutor #{tutor.user.id} ({tutor.user.username})")
     
     def create_fixed_bookings(self):
+        """Create fixed bookings from students"""
         for booking_data in booking_fixtures:
             try:
                 student = Student.objects.get(user__username=booking_data['student_username'])
@@ -270,6 +271,7 @@ class Command(BaseCommand):
                 print(f"Student {booking_data['student_username']} does not exist.")
  
     def create_fixed_lessons(self):
+        """Create fixed lessons from bookings and tutors"""
         for lesson_data in lesson_fixtures:
             try:
                 student = Student.objects.get(user__username=lesson_data['student_username'])

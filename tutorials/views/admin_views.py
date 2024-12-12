@@ -7,12 +7,6 @@ from django.http import Http404
 from django.http import HttpResponse
 from itertools import chain
 
-
-#TODO: use class based views?
-#TODO: use @login_required once Admin class made
-#TODO: implement Create/Update functionalities
-#TODO: add pagination functionality
-
 def manage_users(request):
     """Renders the manage entities template with all user data"""
     users = User.objects.all().order_by('id')
@@ -30,7 +24,7 @@ def manage_tutors(request):
 
 def manage_admins(request):
     """Renders the manage entities template with admin data."""
-    admins = Admin.objects.all().order_by('user__id')  # Replace Admin with your admin model
+    admins = Admin.objects.all().order_by('user__id')
     return render(request, "manage/manage_admins.html", {'users': admins})
 
 
@@ -61,7 +55,7 @@ def get_user(request, id):
     try:
         context = {'user': User.objects.get(pk=id)}
     except User.DoesNotExist:
-        raise Http404(f"Could not find student with ID {id}")
+        raise Http404(f"Could not find user with ID {id}")
     return render(request, 'entities/user.html', context)
 
 def get_student(request, id):
@@ -137,11 +131,11 @@ def delete_tutors(request, id):
 def delete_admins(request, id):
     """Delete the specified admin as well as the associated user."""
     try:
-        admin = Admin.objects.get(user__id=id)  # Replace Admin with your actual admin model
+        admin = Admin.objects.get(user__id=id)
         admin.delete()
     except Admin.DoesNotExist:
         raise Http404(f"Could not find admin with ID {id}")
-    return redirect('manage_admins')  # Replace with the name of your admin management URL
+    return redirect('manage_admins') 
 
 
 def delete_booking(request, id):

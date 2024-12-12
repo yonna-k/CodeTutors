@@ -9,7 +9,6 @@ class Admin(models.Model):
         related_name='admin_profile',
         primary_key=True
     )
-    # Add any admin-specific fields here
 
     def save(self, *args, **kwargs):
         if not self.user_id:
