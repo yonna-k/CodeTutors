@@ -1,0 +1,20 @@
+{% extends 'manage/manage_users.html' %}
+
+{% block entity_type %}
+    admins
+{% endblock %}
+
+{% block table_rows %}
+    {% for admin in users %}
+    <tr>
+        <th scope="col">{{ admin.user.id }}</th>
+        <td>{{ admin.user.username }}</td>
+        <td>{{ admin.user.first_name }} {{ admin.user.last_name }}</td>
+        <td>{{ admin.user.email }}</td>
+
+        <td class="text-end">
+            <a href="{% url 'get_admin' admin.user.id %}" class="btn btn-primary btn-sm">View</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}

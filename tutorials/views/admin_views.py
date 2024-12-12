@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from tutorials.models import User, Student, Tutor, Booking, Lesson
+from tutorials.models import User, Student, Tutor, Booking, Lesson, Admin
 from tutorials.forms.login_forms import AdminSignUpForm
 from django.http import Http404
 from django.http import HttpResponse
@@ -26,6 +26,12 @@ def manage_tutors(request):
     "Renders the manage entities template with tutor data"
     tutors = Tutor.objects.all().order_by('user__id')
     return render(request, "manage/manage_tutors.html", {'users': tutors})
+
+def manage_admins(request):
+    "Renders the manage entities template with admin data."
+    admins = Admin.objects.all().order_by('user__id')  # Replace Admin with your admin model
+    return render(request, "manage/manage_admins.html", {'users': admins})
+
 
 def manage_bookings(request):
     "Renders the manage entities template with booking data"
@@ -73,6 +79,15 @@ def get_tutor(request, id):
         raise Http404(f"Could not find tutor with ID {id}")
     return render(request, 'entities/tutor.html', context)
 
+def get_admin(request, id):
+    "Renders the specific admin template."
+    try:
+        context = {'admin': Admin.objects.get(user__id=id)}  
+    except Admin.DoesNotExist:
+        raise Http404(f"Could not find admin with ID {id}")
+    return render(request, 'entities/admin-profile.html', context)
+
+
 def get_booking(request, id):
     "Renders the specific booking template"
     try:
@@ -117,6 +132,16 @@ def delete_tutors(request, id):
     except Tutor.DoesNotExist:
         raise Http404(f"Could not find tutor with ID {id}")
     return redirect('manage_tutors')
+
+def delete_admins(request, id):
+    "Delete the specified admin as well as the associated user."
+    try:
+        admin = Admin.objects.get(user__id=id)  # Replace Admin with your actual admin model
+        admin.delete()
+    except Admin.DoesNotExist:
+        raise Http404(f"Could not find admin with ID {id}")
+    return redirect('manage_admins')  # Replace with the name of your admin management URL
+
 
 def delete_booking(request, id):
     "Delete the specified booking"
