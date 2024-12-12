@@ -100,11 +100,11 @@ class ProfileViewTest(TestCase):
 
         # Determine the expected redirect based on the user's role
         if self.user.role == 'student':
-            expected_redirect_url = reverse('student_dashboard')  # Replace with your URL name
+            expected_redirect_url = reverse('student_dashboard')
         elif self.user.role == 'tutor':
-            expected_redirect_url = reverse('tutor_dashboard')  # Replace with your URL name
+            expected_redirect_url = reverse('tutor_dashboard')
         elif self.user.role == 'admin':
-            expected_redirect_url = reverse('admin_dashboard')  # Replace with your URL name
+            expected_redirect_url = reverse('admin_dashboard')
         else:
             self.fail(f"Unexpected role for user {self.user.username}: {self.user.role}")
 

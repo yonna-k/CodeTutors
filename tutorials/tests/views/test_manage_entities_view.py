@@ -3,8 +3,6 @@ from tutorials.models import User, Student, Tutor, Booking, Lesson
 from datetime import date, time
 from django.urls import reverse
 
-#TODO: Add more tests
-
 class ManageEntitiesTestCase(TestCase):
     def setUp(self):
         # Create a User instance

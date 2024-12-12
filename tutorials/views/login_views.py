@@ -28,10 +28,7 @@ def dashboard(request):
     else:
         return redirect('dashboard')
 
-# TODO: add @login_required
-# TODO: may also need to implement filtering out past lessons elsewhere
-
-#@login_required
+@login_required
 def student_dashboard(request):
     """Display the student's dashboard."""
     student = request.user.student_profile
@@ -63,7 +60,7 @@ def student_dashboard(request):
     }
     return render(request, 'student_dashboard.html', context)
 
-#@login_required
+@login_required
 def tutor_dashboard(request):
     """Display the tutor's dashboard."""
     tutor = request.user.tutor_profile
@@ -94,14 +91,11 @@ def tutor_dashboard(request):
     }
     return render(request, 'tutor_dashboard.html', context)
 
-#TODO @login_required
+@login_required
 def admin_dashboard(request):
     return render(request, 'admin_dashboard.html', {'user': request.user})
 
 def create_booking(request):
-    if request.method == "POST":
-        #TODO Handle booking form submission
-        pass
     return render(request, 'create_booking.html')
 
 

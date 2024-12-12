@@ -9,6 +9,7 @@ from tutorials.models.lesson_model import Lesson
 from tutorials.forms.lesson_forms import AssignTutorForm
 
 def assign_tutor(request, booking_id):
+    """Assign a tutor to a booking"""
     booking = get_object_or_404(Booking, id=booking_id)
 
     #maps language to attribute
@@ -101,9 +102,9 @@ def check_overlapping_lessons(tutor, booking):
             end_time <= lesson_start_time or  #current booking ends before or exactly when the existing lesson starts
             start_time >= lesson_end_time    #current booking starts after or exactly when the existing lesson ends
         ):
-            return True  #overlap detected
+            return True
 
-    return False  #no overlap
+    return False
 
 #books lessons for the rest of the term for the student
 def generate_recurring_lessons(booking, tutor):

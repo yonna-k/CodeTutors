@@ -2,8 +2,6 @@ from django.test import TestCase
 from django.urls import reverse
 from tutorials.models.user_models import User
 
-#TODO: Update depending on how models are implemented
-
 class StudentDashboardViewTest(TestCase):
     """Tests of the student dashboard view."""
 
@@ -36,9 +34,4 @@ class StudentDashboardViewTest(TestCase):
         self.assertEqual(upcoming_lessons.count(), 1)  # One upcoming lesson
         lesson = upcoming_lessons.first()
         self.assertEqual(lesson.booking.student.user.username, '@charlie')
-    
-    #TODO: Test redirect for when Student logs in
-    def test_get_home_redirects_when_logged_in(self):
-        pass
 
-    #TODO: Tests for buttons on the page for checking bookings

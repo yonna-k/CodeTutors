@@ -153,15 +153,6 @@ class TutorSignUpForm(NewPasswordMixin, forms.ModelForm):
             label=day
         )
 
-    # vars()['rate'] = forms.DecimalField(
-    #     max_digits=5,
-    #     decimal_places=2,
-    #     initial=0.00,
-    #     min_value=0,
-    #     help_text="Enter your preferred hourly rate.",
-    #     label="Hourly Rate"
-    # )
-
     rate = forms.DecimalField(
         max_digits=5,
         decimal_places=2,
