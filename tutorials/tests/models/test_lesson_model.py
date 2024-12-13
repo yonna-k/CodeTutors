@@ -120,6 +120,12 @@ class LessonModelTest(TestCase):
         self.lesson.booking.duration = "long"
         self.assertEqual(DURATION_MULTIPLIER.get(self.lesson.booking.duration, 1) * self.lesson.tutor.rate, self.lesson.invoice)
 
+    def test_invoice_calculated_when_tutor_rate_is_zero(self):
+        self.tutor.rate = 0
+        self.tutor.save()
+        
+        self.assertEqual(self.lesson.invoice, 0)
+
 
     #helper methods
     def _assert_lesson_is_valid(self):

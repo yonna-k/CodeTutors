@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-&$dln5wpgorppuw&(gintxm573v2ks+zq4o$(4*lapguixf^+2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['joemakarski.pythonanywhere.com', '127.0.0.1', 'yonnak.pythonanywhere.com']
+ALLOWED_HOSTS = ['joemakarski.pythonanywhere.com', 'localhost', '127.0.0.1', 'yonnak.pythonanywhere.com']
 
 
 # Application definition
@@ -142,3 +142,6 @@ REDIRECT_URL_WHEN_LOGGED_IN = 'dashboard'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+# Custom view for forbidden page
+HANDLER403 = 'yourapp.views.forbidden'

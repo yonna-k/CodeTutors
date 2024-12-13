@@ -1,5 +1,4 @@
 """Tests for the profile view."""
-from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 from tutorials.forms.login_forms import UserForm

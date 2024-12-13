@@ -1,12 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
-from tutorials.forms.booking_forms import BookingForm
 from tutorials.models.booking_model import Booking
 from tutorials.models.student_model import Student
 from tutorials.models.user_models import User
 from tutorials.models.tutor_model import Tutor
-from django.contrib.auth.hashers import make_password
-from django.contrib.messages import get_messages
 
 class CreateBookingViewTestCase(TestCase):
     fixtures = [
@@ -67,5 +64,5 @@ class CreateBookingViewTestCase(TestCase):
         self.client.login(username=self.tutor_user.username, password='Password123')  # Ensure the user is logged in
         prev_count = Booking.objects.count()
         response = self.client.post(self.url, data=self.valid_data)
-        self.assertRedirects(response, reverse('tutor_dashboard'))
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Booking.objects.count(), prev_count)

@@ -56,7 +56,19 @@ class StudentModelTestCase(TestCase):
     def test_level_cannot_be_blank(self):
         self.student.level = ''
         self._assert_student_is_invalid()
+    
+    def test_creates_user_when_user_is_none(self):
+        student = Student()
+        student.save()
 
+        # Check that a User instance is created
+        self.assertIsNotNone(student.user)
+        self.assertTrue(student.user.username.startswith('student_'))
+        self.assertEqual(student.user.role, 'student')
+
+    def test_str_method(self):
+        expected_str = f"{self.student.user.first_name} ({self.student.level})"
+        self.assertEqual(str(self.student), expected_str)
 
     # Helpers
     def _assert_student_is_valid(self):

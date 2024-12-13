@@ -1,4 +1,3 @@
-from django import forms
 from django.test import TestCase
 from tutorials.forms.booking_forms import BookingForm
 
@@ -96,6 +95,12 @@ class BookingFormTestCase(TestCase):
 
 
     #tests for time
+    def test_time_is_required(self):
+        self.form_input['time'] = ''
+        form = BookingForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+        self.assertIn('time', form.errors)
+
     def test_time_must_be_after_nine(self):
         self.form_input['time'] = '08:00:00'
         form = BookingForm(data=self.form_input)
@@ -123,6 +128,12 @@ class BookingFormTestCase(TestCase):
 
 
     #tests for frequency
+    def test_frequency_is_required(self):
+        self.form_input['frequency'] = ''
+        form = BookingForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required.', form.errors.get('frequency', []))
+
     def test_frequency_can_be_fortnightly(self):
         self.form_input['frequency'] = 'fortnightly'
         form = BookingForm(data=self.form_input)
@@ -135,6 +146,12 @@ class BookingFormTestCase(TestCase):
     
 
     #tests for duration
+    def test_duration_is_required(self):
+        self.form_input['duration'] = ''
+        form = BookingForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required.', form.errors.get('duration', []))
+
     def test_duration_can_be_long(self):
         self.form_input['duration'] = 'long'
         form = BookingForm(data=self.form_input)
@@ -147,6 +164,12 @@ class BookingFormTestCase(TestCase):
 
 
     #tests for language
+    def test_lang_is_required(self):
+        self.form_input['lang'] = ''
+        form = BookingForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required.', form.errors.get('lang', []))
+
     def test_lang_can_be_java(self):
         self.form_input['lang'] = "Java"
         form = BookingForm(data=self.form_input)

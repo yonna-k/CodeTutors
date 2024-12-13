@@ -1,15 +1,21 @@
 {% extends 'base_content.html' %}
+
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h1>Sign up</h1>
-      <form action="{% url 'sign_up' %}" method="post">
+  <div class="container-fluid d-flex justify-content-center align-items-center min-height: 100vh" 
+       style="background: linear-gradient(to right, #2c3e50, #3498db);">
+    <div class="text-center text-white p-5 rounded shadow-lg" 
+         style="max-width: 600px; background-color: rgba(0, 0, 0, 0.6);">
+      <h1 class="display-4 font-weight-bold mb-4">{% block title %}Sign Up{% endblock %}</h1>
+
+      <form action="{% block form_action %}{% endblock %}" method="post">
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}
-        <input type="submit" value="Sign up" class="btn btn-primary">
+
+        <div class="mt-4">
+          <input type="submit" value="{% block button_text %}Sign Up{% endblock %}" 
+                 class="btn {% block button_class %}btn-primary{% endblock %} btn-lg btn-block rounded-pill">
+        </div>
       </form>
     </div>
   </div>
-</div>
 {% endblock %}

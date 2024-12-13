@@ -1,10 +1,7 @@
-from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.conf import settings
 from libgravatar import Gravatar
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):

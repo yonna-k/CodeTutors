@@ -7,9 +7,13 @@ from tutorials.models.booking_model import Booking
 from tutorials.models.tutor_model import Tutor
 from tutorials.models.lesson_model import Lesson
 from tutorials.forms.lesson_forms import AssignTutorForm
+from django.core.exceptions import PermissionDenied
 
 def assign_tutor(request, booking_id):
     """Assign a tutor to a booking"""
+    if request.user.role != 'admin':
+        raise PermissionDenied
+
     booking = get_object_or_404(Booking, id=booking_id)
 
     #maps language to attribute
