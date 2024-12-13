@@ -1,6 +1,4 @@
 from django.db import models
-from django.conf import settings
-from .user_models import User
 from .student_model import Student
 
 class Booking(models.Model):

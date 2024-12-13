@@ -55,7 +55,7 @@
   },
   {
     "model": "tutorials.booking",
-    "pk": 1,
+    "pk": 10,
     "fields": {
       "student_id": 3,
       "date": "2025-1-31",
@@ -70,9 +70,9 @@
   },
   {
     "model": "tutorials.lesson",
-    "pk": 1,
+    "pk": 10,
     "fields": {
-      "booking": 1,
+      "booking": 10,
       "tutor": 2
     }
   },
@@ -99,10 +99,10 @@
   },
   {
     "model": "tutorials.booking",
-    "pk": 2,
+    "pk": 11,
     "fields": {
       "student_id": 4,
-      "date": "2024-12-12",
+      "date": "2025-12-12",
       "time": "10:00:00",
       "venue": "Code Tutors HQ",
       "status": "OPEN",
