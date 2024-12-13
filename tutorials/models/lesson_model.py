@@ -3,6 +3,7 @@ from .booking_model import Booking
 from .tutor_model import Tutor
 
 class Lesson(models.Model):
+    """Has a booking with a tutor"""
     booking = models.OneToOneField(
         Booking,
         on_delete=models.CASCADE,

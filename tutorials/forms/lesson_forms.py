@@ -2,6 +2,7 @@ from django import forms
 from tutorials.models.tutor_model import Tutor
 
 class AssignTutorForm(forms.Form):
+    """A form to assign a tutor to a booking."""
     tutor = forms.ModelChoiceField(
         queryset=Tutor.objects.none(),
         label="Assign Tutor"

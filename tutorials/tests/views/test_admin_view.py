@@ -211,3 +211,80 @@ class AdminViewTestCase(TestCase):
         invalid_id = 99999 #non-existent
         response=self.client.get(reverse('delete_lesson', args=[invalid_id]))
         self.assertEqual(response.status_code, 404)
+
+    def test_manage_users_view_non_admin(self):
+        self.client.force_login(self.student)
+        response = self.client.get(reverse('manage_users'))
+        self.assertEqual(response.status_code, 403)
+
+    def test_manage_students_view_non_admin(self):
+        self.client.force_login(self.tutor)
+        response = self.client.get(reverse('manage_students'))
+        self.assertEqual(response.status_code, 403)
+    
+    def test_delete_self_admin_view(self):
+        response = self.client.post(reverse('delete_user', args=[self.admin.id]))
+        self.assertEqual(response.status_code, 403) 
+        self.assertTrue(User.objects.filter(pk=self.admin.id).exists())
+
+    def test_get_booking_view_as_admin(self):
+        booking = Booking.objects.get(pk=11)
+        response = self.client.get(reverse('get_booking', args=[booking.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entities/booking.html')
+        self.assertEqual(response.context['booking'], booking)
+
+    def test_get_booking_view_as_student(self):
+        self.client.force_login(self.student)
+        booking = Booking.objects.get(student__user=self.student)
+        response = self.client.get(reverse('get_booking', args=[booking.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entities/booking.html')
+        self.assertEqual(response.context['booking'], booking)
+
+    def test_get_lesson_view_as_admin(self):
+        lesson = Lesson.objects.get(pk=10)
+        response = self.client.get(reverse('get_lesson', args=[lesson.booking.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entities/lesson.html')
+        self.assertEqual(response.context['lesson'], lesson)
+
+    def test_get_lesson_view_as_student(self):
+        self.client.force_login(self.student)
+        lesson = Lesson.objects.get(booking__student__user=self.student)
+        response = self.client.get(reverse('get_lesson', args=[lesson.booking.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entities/lesson.html')
+        self.assertEqual(response.context['lesson'], lesson)
+
+    def test_get_lesson_view_as_tutor(self):
+        self.client.force_login(self.tutor)
+        lesson = Lesson.objects.get(tutor__user=self.tutor)
+        response = self.client.get(reverse('get_lesson', args=[lesson.booking.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'entities/lesson.html')
+        self.assertEqual(response.context['lesson'], lesson)
+    
+    def test_delete_tutor_as_admin(self):
+        tutor_to_delete = Tutor.objects.get(user=self.tutor)
+        response = self.client.post(reverse('delete_tutor', args=[self.tutor.id]))
+        self.assertRedirects(response, reverse('manage_tutors'))
+        self.assertFalse(Tutor.objects.filter(pk=tutor_to_delete.user.id).exists())  # Tutor should be deleted
+
+    def test_delete_tutor_as_non_admin(self):
+        self.client.force_login(self.student)
+        response = self.client.post(reverse('delete_tutor', args=[self.tutor.id]))
+        self.assertEqual(response.status_code, 403) 
+        self.assertTrue(Tutor.objects.filter(pk=self.tutor.id).exists())
+
+    def test_delete_booking_as_admin(self):
+        booking = Booking.objects.get(pk=11)
+        response = self.client.post(reverse('delete_booking', args=[booking.id]))
+        self.assertRedirects(response, reverse('manage_bookings'))
+        self.assertFalse(Booking.objects.filter(pk=booking.id).exists())  # Booking should be deleted
+
+    def test_delete_lesson_as_admin(self):
+        lesson = Lesson.objects.get(pk=10)
+        response = self.client.post(reverse('delete_lesson', args=[lesson.booking.id]))
+        self.assertRedirects(response, reverse('manage_lessons'))
+        self.assertFalse(Lesson.objects.filter(pk=lesson.booking.id).exists())

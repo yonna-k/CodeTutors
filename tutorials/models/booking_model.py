@@ -2,6 +2,7 @@ from django.db import models
 from .student_model import Student
 
 class Booking(models.Model):
+    """Bookings get requested by a student."""
     # default 1 may cause issues if there is no Student
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="bookings", default=1)
     date = models.DateField()

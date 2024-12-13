@@ -1,4 +1,3 @@
-from django import forms
 from django.test import TestCase
 from tutorials.forms.lesson_forms import AssignTutorForm
 from tutorials.models.tutor_model import Tutor

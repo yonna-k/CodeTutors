@@ -185,3 +185,73 @@ class LogInViewTestCase(TestCase, LogInTester, MenuTesterMixin):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
+
+    def test_log_in_with_non_existent_user(self):
+        form_input = { 'username': 'nonexistentuser', 'password': 'Password123' }
+        response = self.client.post(self.url, form_input)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'log_in.html')
+        form = response.context['form']
+        self.assertTrue(isinstance(form, LogInForm))
+        self.assertFalse(form.is_bound)
+        self.assertFalse(self._is_logged_in())
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.ERROR)
+        self.assertEqual(str(messages_list[0]), "The credentials provided were invalid!")
+
+    def test_successful_log_in_as_admin(self):
+        admin_user = User.objects.create_user(username='adminuser', password='Password123', role='admin')
+        self.client.login(username=admin_user.username, password="Password123")
+        response = self.client.get(reverse('admin_dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin_dashboard.html')
+
+    def test_redirect_to_login_on_restricted_page(self):
+        response = self.client.get(reverse('student_dashboard'))
+        self.assertRedirects(response, f"{reverse('log_in')}?next={reverse('student_dashboard')}", status_code=302)
+
+    def test_log_in_with_short_username(self):
+        form_input = { 'username': 'jd', 'password': 'Password123' }
+        response = self.client.post(self.url, form_input)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'log_in.html')
+        form = response.context['form']
+        self.assertTrue(isinstance(form, LogInForm))
+        self.assertFalse(form.is_bound)
+        self.assertFalse(self._is_logged_in())
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.ERROR)
+        self.assertEqual(str(messages_list[0]), "The credentials provided were invalid!")
+
+    def test_log_in_with_invalid_role(self):
+        invalid_user = User.objects.create_user(username='invalidroleuser', password='Password123', role='invalidrole')
+        form_input = { 'username': invalid_user.username, 'password': 'Password123' }
+        response = self.client.post(self.url, form_input)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'log_in.html')
+        form = response.context['form']
+        self.assertTrue(isinstance(form, LogInForm))
+        self.assertFalse(form.is_bound)
+        self.assertFalse(self._is_logged_in())
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.ERROR)
+        self.assertEqual(str(messages_list[0]), "The credentials provided were invalid!")
+
+    def test_log_in_with_inactive_user(self):
+        self.user.is_active = False
+        self.user.save()
+        form_input = { 'username': '@johndoe', 'password': 'Password123' }
+        response = self.client.post(self.url, form_input)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'log_in.html')
+        form = response.context['form']
+        self.assertTrue(isinstance(form, LogInForm))
+        self.assertFalse(form.is_bound)
+        self.assertFalse(self._is_logged_in())
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.ERROR)
+        self.assertEqual(str(messages_list[0]), "The credentials provided were invalid!")

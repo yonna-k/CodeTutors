@@ -3,7 +3,7 @@ from django.conf import settings
 from .user_models import User
 
 class Student(models.Model):
-
+    """A user that can book bookings."""
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

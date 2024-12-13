@@ -1,8 +1,7 @@
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from tutorials.models import Admin, User, Tutor, Student, Booking, Lesson
-import pytz
 from faker import Faker
 from random import randint, choice, random, uniform
 from datetime import datetime, timedelta, time

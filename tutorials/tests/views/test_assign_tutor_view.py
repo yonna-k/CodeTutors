@@ -6,7 +6,6 @@ from tutorials.models.student_model import Student
 from tutorials.models.booking_model import Booking
 from tutorials.models.lesson_model import Lesson
 from tutorials.models.user_models import User
-from django.contrib.auth.hashers import make_password
 
 class AssignTutorViewTest(TestCase):
     fixtures = [

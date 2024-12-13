@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 
 
 class Tutor(models.Model):
+    """Can be associated with a booking to make a lesson."""
 
     # id = models.AutoField(primary_key=True)
     user = models.OneToOneField(

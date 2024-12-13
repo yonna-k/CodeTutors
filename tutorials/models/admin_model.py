@@ -3,6 +3,7 @@ from django.conf import settings
 from .user_models import User
 
 class Admin(models.Model):
+    """Admin model that can manage entities."""
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

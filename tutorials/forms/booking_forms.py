@@ -5,6 +5,7 @@ from django import forms
 from tutorials.models.booking_model import Booking
 
 class BookingForm(forms.ModelForm):
+    """A model-form for bookings."""
     class Meta:
         model = Booking
         #student field added after
