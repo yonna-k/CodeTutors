@@ -35,6 +35,7 @@ def forbidden(request):
 
 def get_lessons(user, role):
     """Helper method to get previous and upcoming lessons."""
+
     now = timezone.now()
     if role == 'student':
         profile = user.student_profile
@@ -107,9 +108,6 @@ def admin_dashboard(request):
     return render(request, 'admin_dashboard.html', {'user': request.user})
 
 def create_booking(request):
-    if request.method == "POST":
-        #TODO Handle booking form submission
-        pass
     return render(request, 'create_booking.html')
 
 

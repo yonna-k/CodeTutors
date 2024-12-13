@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 
-# needs to be changed in accordance with the refactoring of Student model
 @login_required
 def create_booking(request):
     """View to handle booking creation."""

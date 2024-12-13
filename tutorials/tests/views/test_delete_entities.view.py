@@ -2,8 +2,6 @@ from django.test import TestCase
 from tutorials.models import User, Student, Tutor, Booking, Lesson
 from datetime import date, time
 
-#TODO: Add more tests
-
 class EntityDeleteTestCase(TestCase):
     """Test cases for the `delete_*` views."""
 

@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from tutorials.models import User, Student, Tutor, Booking, Lesson, Admin
 from tutorials.forms.login_forms import AdminSignUpForm
-from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 
@@ -44,7 +43,7 @@ def manage_tutors(request):
 @is_admin_required
 def manage_admins(request):
     """Renders the manage entities template with admin data."""
-    admins = Admin.objects.all().order_by('user__id')  # Replace Admin with your admin model
+    admins = Admin.objects.all().order_by('user__id')
     return render(request, "manage/manage_admins.html", {'users': admins})
 
 @is_admin_required
