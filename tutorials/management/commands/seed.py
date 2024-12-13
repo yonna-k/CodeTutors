@@ -62,6 +62,7 @@ lesson_fixtures = [
 class Command(BaseCommand):
     USER_COUNT = 200
     TUTOR_COUNT = 15
+    ADMIN_COUNT = 10
     STUDENT_COUNT = 100
     BOOKING_COUNT = 100
     LESSON_COUNT = 75
@@ -75,6 +76,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.create_fixed_users()
         self.create_fixed_lessons()
+        self.create_admins()
         self.create_tutors()
         self.create_students()
         self.create_bookings()
@@ -85,6 +87,12 @@ class Command(BaseCommand):
         """Create predefined users from user_fixtures."""
         for data in user_fixtures:
             self.try_create_user(data)
+    
+    def create_admins(self):
+        """Seed random Admin objects."""
+        to_create = self.ADMIN_COUNT - Tutor.objects.count()
+        for _ in range(to_create):
+            self.generate_random_admin()
 
     def create_tutors(self):
         """Seed random Tutor objects."""
@@ -97,6 +105,21 @@ class Command(BaseCommand):
         to_create = self.STUDENT_COUNT - Student.objects.count()
         for _ in range(to_create):
             self.generate_random_student()
+
+    def generate_random_admin(self):
+        """Generate random students."""
+        first_name = self.faker.first_name()
+        last_name = self.faker.last_name()
+        email = create_email(first_name, last_name)
+        username = create_username(first_name, last_name)
+
+        self.try_create_user({
+            'username': username,
+            'email': email,
+            'first_name': first_name,
+            'last_name': last_name,
+            'role': 'admin',
+        })
 
     def generate_random_student(self):
         """Generate random students."""
